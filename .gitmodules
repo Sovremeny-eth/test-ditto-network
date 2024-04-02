@@ -1,0 +1,44 @@
+[submodule "lib/forge-std"]
+	path = lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+	branch = master
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+	branch = release-v4.8
+[submodule "lib/aave-v3-periphery"]
+	path = lib/aave-v3-periphery
+	url = https://github.com/aave/aave-v3-periphery
+	branch = master
+[submodule "lib/aave-v3-core"]
+	path = lib/aave-v3-core
+	url = https://github.com/aave/aave-v3-core
+	branch = master
+[submodule "lib/v3-core"]
+	path = lib/v3-core
+	url = https://github.com/uniswap/v3-core
+	branch = 0.8
+[submodule "lib/v3-periphery"]
+	path = lib/v3-periphery
+	url = https://github.com/uniswap/v3-periphery
+	branch = 0.8
+[submodule "lib/gelato"]
+	path = lib/gelato
+	url = https://github.com/gelatodigital/automate.git
+	branch = master
+[submodule "lib/account-abstraction"]
+	path = lib/account-abstraction
+	url = https://github.com/eth-infinitism/account-abstraction
+	branch = releases/v0.6
+[submodule "lib/I4337"]
+	path = lib/I4337
+	url = https://github.com/leekt/I4337
+[submodule "lib/FreshCryptoLib"]
+	path = lib/FreshCryptoLib
+	url = https://github.com/rdubois-crypto/FreshCryptoLib
+[submodule "lib/p256-verifier"]
+	path = lib/p256-verifier
+	url = https://github.com/daimo-eth/p256-verifier
+[submodule "lib/solady"]
+	path = lib/solady
+	url = https://github.com/vectorized/solady

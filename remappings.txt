@@ -1,0 +1,13 @@
+ds-test/=lib/forge-std/lib/ds-test/src/
+forge-std/=lib/forge-std/src/
+@openzeppelin/=lib/openzeppelin-contracts/
+@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/
+@aave/=lib/
+@uniswap/v3-core/=lib/v3-core/
+@uniswap/v3-periphery/=lib/v3-periphery/
+@gelato/=lib/gelato/
+@account-abstraction/=lib/account-abstraction
+solady/=lib/solady/src/
+I4337/=lib/I4337/src/
+FreshCryptoLib/=lib/FreshCryptoLib/solidity/src/
+p256-verifier/=lib/p256-verifier/src/

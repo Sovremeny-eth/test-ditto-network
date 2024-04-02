@@ -1,0 +1,41 @@
+# IntelliJ IDEA files
+.idea
+*.iml
+
+# Compiler files
+cache/
+out/
+dist/
+types/
+
+# Ignores development broadcast logs
+/broadcast
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+
+# coverage files
+coverage/
+node_modules
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+artifacts-selected
+
+# Foreign lock files
+package-lock.json
+yarn.lock
+.pnpm-store
+
+cache_hardhat
+
+lcov.info
+settings.json
