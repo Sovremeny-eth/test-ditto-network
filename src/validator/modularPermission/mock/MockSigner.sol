@@ -1,9 +1,9 @@
 pragma solidity ^0.8.0;
 
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ValidationData, ValidUntil, ValidAfter, packValidationData} from "src/common/Types.sol";
-import {SIG_VALIDATION_FAILED} from "src/common/Constants.sol";
-import {ISigner} from "../ISigner.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { ValidationData, ValidUntil, ValidAfter, packValidationData } from "src/common/Types.sol";
+import { SIG_VALIDATION_FAILED } from "src/common/Constants.sol";
+import { ISigner } from "../ISigner.sol";
 
 contract MockSigner is ISigner {
     ValidationData public validationData;
@@ -21,22 +21,22 @@ contract MockSigner is ISigner {
         signerData = data;
     }
 
-    function validateUserOp(address, bytes32 permissionId, bytes32, bytes calldata)
-        external
-        payable
-        override
-        returns (ValidationData)
-    {
+    function validateUserOp(
+        address,
+        bytes32 permissionId,
+        bytes32,
+        bytes calldata
+    ) external payable override returns (ValidationData) {
         count[permissionId]++;
         return validationData;
     }
 
-    function validateSignature(address, bytes32, bytes32, bytes calldata)
-        external
-        view
-        override
-        returns (ValidationData)
-    {
+    function validateSignature(
+        address,
+        bytes32,
+        bytes32,
+        bytes calldata
+    ) external view override returns (ValidationData) {
         return validationData;
     }
 }

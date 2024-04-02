@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ECDSA} from "solady/utils/ECDSA.sol";
-import {IKernelValidator} from "../interfaces/IKernelValidator.sol";
-import {ValidAfter, ValidUntil, ValidationData, packValidationData} from "../common/Types.sol";
-import {SIG_VALIDATION_FAILED} from "../common/Constants.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { ECDSA } from "solady/utils/ECDSA.sol";
+import { IKernelValidator } from "../interfaces/IKernelValidator.sol";
+import { ValidAfter, ValidUntil, ValidationData, packValidationData } from "../common/Types.sol";
+import { SIG_VALIDATION_FAILED } from "../common/Constants.sol";
 
 // idea, we can make this merkle root
 struct ERC165SessionKeyStorage {
@@ -22,7 +22,8 @@ interface IERC165 {
 }
 
 contract ERC165SessionKeyValidator is IKernelValidator {
-    mapping(address sessionKey => mapping(address kernel => ERC165SessionKeyStorage)) public sessionKeys;
+    mapping(address sessionKey => mapping(address kernel => ERC165SessionKeyStorage)) public
+        sessionKeys;
 
     function enable(bytes calldata _data) external payable {
         address sessionKey = address(bytes20(_data[0:20]));
@@ -31,8 +32,9 @@ contract ERC165SessionKeyValidator is IKernelValidator {
         ValidAfter validAfter = ValidAfter.wrap(uint48(bytes6(_data[28:34])));
         ValidUntil validUntil = ValidUntil.wrap(uint48(bytes6(_data[34:40])));
         uint32 addressOffset = uint32(bytes4(_data[40:44]));
-        sessionKeys[sessionKey][msg.sender] =
-            ERC165SessionKeyStorage(true, selector, interfaceId, validAfter, validUntil, addressOffset);
+        sessionKeys[sessionKey][msg.sender] = ERC165SessionKeyStorage(
+            true, selector, interfaceId, validAfter, validUntil, addressOffset
+        );
     }
 
     function disable(bytes calldata _data) external payable {
@@ -41,15 +43,18 @@ contract ERC165SessionKeyValidator is IKernelValidator {
         delete sessionKeys[sessionKey][msg.sender];
     }
 
-    function validateSignature(bytes32, bytes calldata) external pure override returns (ValidationData) {
+    function validateSignature(
+        bytes32,
+        bytes calldata
+    ) external pure override returns (ValidationData) {
         revert NotImplemented();
     }
 
-    function validateUserOp(UserOperation calldata _userOp, bytes32 _userOpHash, uint256)
-        external
-        payable
-        returns (ValidationData)
-    {
+    function validateUserOp(
+        UserOperation calldata _userOp,
+        bytes32 _userOpHash,
+        uint256
+    ) external payable returns (ValidationData) {
         bytes32 hash = ECDSA.toEthSignedMessageHash(_userOpHash);
         address recovered = ECDSA.recover(hash, _userOp.signature);
         ERC165SessionKeyStorage storage sessionKey = sessionKeys[recovered][_userOp.sender];
@@ -57,8 +62,12 @@ contract ERC165SessionKeyValidator is IKernelValidator {
             return SIG_VALIDATION_FAILED;
         }
         require(bytes4(_userOp.callData[0:4]) == sessionKey.selector, "not supported selector");
-        address token = address(bytes20(_userOp.callData[sessionKey.addressOffset:sessionKey.addressOffset + 20]));
-        require(IERC165(token).supportsInterface(sessionKey.interfaceId), "does not support interface");
+        address token = address(
+            bytes20(_userOp.callData[sessionKey.addressOffset:sessionKey.addressOffset + 20])
+        );
+        require(
+            IERC165(token).supportsInterface(sessionKey.interfaceId), "does not support interface"
+        );
         return packValidationData(sessionKey.validAfter, sessionKey.validUntil);
     }
 

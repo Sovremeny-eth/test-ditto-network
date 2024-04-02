@@ -22,8 +22,12 @@ contract KernelHelperTest is Test {
         ValidationData c = _intersectValidationData(a, b);
 
         ValidationData expected = packValidationData(
-            ValidAfter.unwrap(validAfterA) > ValidAfter.unwrap(validAfterB) ? validAfterA : validAfterB,
-            ValidUntil.unwrap(validUntilA) < ValidUntil.unwrap(validUntilB) ? validUntilA : validUntilB
+            ValidAfter.unwrap(validAfterA) > ValidAfter.unwrap(validAfterB)
+                ? validAfterA
+                : validAfterB,
+            ValidUntil.unwrap(validUntilA) < ValidUntil.unwrap(validUntilB)
+                ? validUntilA
+                : validUntilB
         );
         assertEq(ValidationData.unwrap(c), ValidationData.unwrap(expected));
     }

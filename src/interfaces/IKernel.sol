@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import {IKernelValidator} from "./IKernelValidator.sol";
-import {ExecutionDetail, Call} from "../common/Structs.sol";
-import {ValidationData, ValidUntil, ValidAfter} from "../common/Types.sol";
-import {Operation} from "../common/Enums.sol";
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
+import { IKernelValidator } from "./IKernelValidator.sol";
+import { ExecutionDetail, Call } from "../common/Structs.sol";
+import { ValidationData, ValidUntil, ValidAfter } from "../common/Types.sol";
+import { Operation } from "../common/Enums.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
 
 interface IKernel {
     // Event declarations
@@ -14,7 +14,9 @@ interface IKernel {
 
     event DefaultValidatorChanged(address indexed oldValidator, address indexed newValidator);
 
-    event ExecutionChanged(bytes4 indexed selector, address indexed executor, address indexed validator);
+    event ExecutionChanged(
+        bytes4 indexed selector, address indexed executor, address indexed validator
+    );
 
     // Error declarations
     error NotAuthorizedCaller();
@@ -48,10 +50,12 @@ interface IKernel {
     function getExecution(bytes4 _selector) external view returns (ExecutionDetail memory);
 
     /// @notice Changes the execution details for a specific function selector
-    /// @dev This function can only be called from the EntryPoint contract, the contract owner, or itself
+    /// @dev This function can only be called from the EntryPoint contract, the contract owner, or
+    /// itself
     /// @param _selector The selector of the function for which execution details are being set
     /// @param _executor The executor to be associated with the function selector
-    /// @param _validator The validator contract that will be responsible for validating operations associated with this function selector
+    /// @param _validator The validator contract that will be responsible for validating operations
+    /// associated with this function selector
     /// @param _validUntil The timestamp until which the execution details are valid
     /// @param _validAfter The timestamp after which the execution details are valid
     function setExecution(
@@ -63,7 +67,10 @@ interface IKernel {
         bytes calldata _enableData
     ) external payable;
 
-    function setDefaultValidator(IKernelValidator _defaultValidator, bytes calldata _data) external payable;
+    function setDefaultValidator(
+        IKernelValidator _defaultValidator,
+        bytes calldata _data
+    ) external payable;
 
     /// @notice Updates the disabled mode
     /// @dev This function can be used to update the disabled mode
@@ -88,8 +95,9 @@ interface IKernel {
     /// @param userOpHash The hash of the user operation
     /// @param missingAccountFunds The funds needed to be reimbursed
     /// @return validationData The data used for validation
-    function validateUserOp(UserOperation memory userOp, bytes32 userOpHash, uint256 missingAccountFunds)
-        external
-        payable
-        returns (ValidationData validationData);
+    function validateUserOp(
+        UserOperation memory userOp,
+        bytes32 userOpHash,
+        uint256 missingAccountFunds
+    ) external payable returns (ValidationData validationData);
 }

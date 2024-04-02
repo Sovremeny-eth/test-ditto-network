@@ -12,7 +12,9 @@ library Kernel_2_2_Deploy {
 
     function deploy() internal returns (address, address) {
         DeterministicDeploy.checkDeploy("Kernel 2.2", EXPECTED_KERNEL_2_2_ADDRESS, KERNEL_2_2_CODE);
-        DeterministicDeploy.checkDeploy("Kernel lite 2.2", EXPECTED_KERNEL_LITE_2_2_ADDRESS, KERNEL_LITE_2_2_CODE);
+        DeterministicDeploy.checkDeploy(
+            "Kernel lite 2.2", EXPECTED_KERNEL_LITE_2_2_ADDRESS, KERNEL_LITE_2_2_CODE
+        );
         return (EXPECTED_KERNEL_2_2_ADDRESS, EXPECTED_KERNEL_LITE_2_2_ADDRESS);
     }
 }

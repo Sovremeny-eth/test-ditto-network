@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
 import "src/Kernel.sol";
 import "src/validator/ECDSAValidator.sol";
 // test artifacts
 // test utils
 import "forge-std/Test.sol";
-import {ERC4337Utils} from "src/utils/ERC4337Utils.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {TestExecutor} from "src/mock/TestExecutor.sol";
-import {TestValidator} from "src/mock/TestValidator.sol";
-import {IKernel} from "src/interfaces/IKernel.sol";
+import { ERC4337Utils } from "src/utils/ERC4337Utils.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { TestExecutor } from "src/mock/TestExecutor.sol";
+import { TestValidator } from "src/mock/TestValidator.sol";
+import { IKernel } from "src/interfaces/IKernel.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -23,7 +23,7 @@ contract KernelECDSATest is KernelTestBase {
         _setExecutionDetail();
     }
 
-    function test_ignore() external {}
+    function test_ignore() external { }
 
     function _setExecutionDetail() internal virtual override {
         executionDetail.executor = address(new TestExecutor());
@@ -35,7 +35,13 @@ contract KernelECDSATest is KernelTestBase {
         return "";
     }
 
-    function getValidatorSignature(UserOperation memory) internal view virtual override returns (bytes memory) {
+    function getValidatorSignature(UserOperation memory)
+        internal
+        view
+        virtual
+        override
+        returns (bytes memory)
+    {
         return "";
     }
 
@@ -46,14 +52,21 @@ contract KernelECDSATest is KernelTestBase {
     }
 
     function getInitializeData() internal view override returns (bytes memory) {
-        return abi.encodeWithSelector(KernelStorage.initialize.selector, defaultValidator, abi.encodePacked(owner));
+        return abi.encodeWithSelector(
+            KernelStorage.initialize.selector, defaultValidator, abi.encodePacked(owner)
+        );
     }
 
     function signUserOp(UserOperation memory op) internal view override returns (bytes memory) {
         return abi.encodePacked(bytes4(0x00000000), entryPoint.signUserOpHash(vm, ownerKey, op));
     }
 
-    function getWrongSignature(UserOperation memory op) internal view override returns (bytes memory) {
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
         return abi.encodePacked(bytes4(0x00000000), entryPoint.signUserOpHash(vm, ownerKey + 1, op));
     }
 
@@ -73,12 +86,15 @@ contract KernelECDSATest is KernelTestBase {
                 IKernel.execute.selector,
                 address(defaultValidator),
                 0,
-                abi.encodeWithSelector(ECDSAValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))),
+                abi.encodeWithSelector(
+                    ECDSAValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))
+                ),
                 Operation.Call
             )
         );
         performUserOperationWithSig(op);
-        (address owner_) = ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
+        (address owner_) =
+            ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
         assertEq(owner_, address(0xdeadbeef), "owner should be 0xdeadbeef");
     }
 
@@ -93,7 +109,8 @@ contract KernelECDSATest is KernelTestBase {
             )
         );
         performUserOperationWithSig(op);
-        (address owner_) = ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
+        (address owner_) =
+            ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
         assertEq(owner_, address(0), "owner should be 0");
     }
 }

@@ -13,7 +13,9 @@ library Kernel_2_3_Deploy {
 
     function deploy() internal returns (address, address) {
         DeterministicDeploy.checkDeploy("Kernel 2.3", EXPECTED_KERNEL_2_3_ADDRESS, KERNEL_2_3_CODE);
-        DeterministicDeploy.checkDeploy("Kernel Lite 2.3", EXPECTED_KERNEL_LITE_2_3_ADDRESS, KERNEL_LITE_2_3_CODE);
+        DeterministicDeploy.checkDeploy(
+            "Kernel Lite 2.3", EXPECTED_KERNEL_LITE_2_3_ADDRESS, KERNEL_LITE_2_3_CODE
+        );
         return (EXPECTED_KERNEL_2_3_ADDRESS, EXPECTED_KERNEL_LITE_2_3_ADDRESS);
     }
 }

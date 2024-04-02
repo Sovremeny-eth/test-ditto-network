@@ -7,9 +7,11 @@ import "forge-std/console.sol";
 
 /// @dev Deterministic deployment of FclWebAuthNValidator
 library FclWebAuthnValidatorDeploy {
-    address constant EXPECTED_P256_VERIFIER_VALIDATOR_ADDRESS = 0x738e3257EE928637fE62c37F91D3e722C45Dcc7C;
+    address constant EXPECTED_P256_VERIFIER_VALIDATOR_ADDRESS =
+        0x738e3257EE928637fE62c37F91D3e722C45Dcc7C;
 
-    address constant EXPECTED_WEBAUTHN_VALIDATOR_ADDRESS = 0x42085b533b27B9AfDAF3864a38c72eF853943DAB;
+    address constant EXPECTED_WEBAUTHN_VALIDATOR_ADDRESS =
+        0x42085b533b27B9AfDAF3864a38c72eF853943DAB;
 
     bytes32 constant DEPLOYMENT_SALT = keccak256("WebAuthNValidator by Frak");
 
@@ -32,7 +34,7 @@ library FclWebAuthnValidatorDeploy {
 
     /// @dev Deploy the P256VerifierWrapper contract
     function _deployOnChainP256() private {
-        P256VerifierWrapper p256Wrapper = new P256VerifierWrapper{salt: DEPLOYMENT_SALT}();
+        P256VerifierWrapper p256Wrapper = new P256VerifierWrapper{ salt: DEPLOYMENT_SALT }();
         require(
             address(p256Wrapper) == EXPECTED_P256_VERIFIER_VALIDATOR_ADDRESS,
             "FclWebAuthnValidatorDeploy: p256 wrapper address mismatch"
@@ -41,8 +43,9 @@ library FclWebAuthnValidatorDeploy {
 
     /// @dev Deploy the P256VerifierWrapper contract
     function _deployValidator() private {
-        WebAuthnFclValidator validator =
-            new WebAuthnFclValidator{salt: DEPLOYMENT_SALT}(EXPECTED_P256_VERIFIER_VALIDATOR_ADDRESS);
+        WebAuthnFclValidator validator = new WebAuthnFclValidator{ salt: DEPLOYMENT_SALT }(
+            EXPECTED_P256_VERIFIER_VALIDATOR_ADDRESS
+        );
         require(
             address(validator) == EXPECTED_WEBAUTHN_VALIDATOR_ADDRESS,
             "FclWebAuthnValidatorDeploy: validator address mismatch"

@@ -1,16 +1,16 @@
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
 import "src/Kernel.sol";
 import "src/validator/WeightedECDSAValidator.sol";
 // test artifacts
 // test utils
 import "forge-std/Test.sol";
-import {ERC4337Utils} from "src/utils/ERC4337Utils.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {TestExecutor} from "src/mock/TestExecutor.sol";
-import {TestValidator} from "src/mock/TestValidator.sol";
-import {IKernel} from "src/interfaces/IKernel.sol";
+import { ERC4337Utils } from "src/utils/ERC4337Utils.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { TestExecutor } from "src/mock/TestExecutor.sol";
+import { TestValidator } from "src/mock/TestValidator.sol";
+import { IKernel } from "src/interfaces/IKernel.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -49,7 +49,7 @@ contract KernelWeightedECDSATest is KernelTestBase {
         _setExecutionDetail();
     }
 
-    function test_ignore() external {}
+    function test_ignore() external { }
 
     function _setExecutionDetail() internal virtual override {
         executionDetail.executor = address(new TestExecutor());
@@ -61,7 +61,13 @@ contract KernelWeightedECDSATest is KernelTestBase {
         return "";
     }
 
-    function getValidatorSignature(UserOperation memory) internal view virtual override returns (bytes memory) {
+    function getValidatorSignature(UserOperation memory)
+        internal
+        view
+        virtual
+        override
+        returns (bytes memory)
+    {
         return "";
     }
 
@@ -95,7 +101,9 @@ contract KernelWeightedECDSATest is KernelTestBase {
 
         bytes32 digest = keccak256(
             abi.encode(
-                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256(
+                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+                ),
                 keccak256("WeightedECDSAValidator"),
                 keccak256("0.0.3"),
                 block.chainid,
@@ -103,8 +111,9 @@ contract KernelWeightedECDSATest is KernelTestBase {
             )
         );
 
-        bytes32 structHash =
-            keccak256(abi.encode(keccak256("Approve(bytes32 callDataAndNonceHash)"), calldataAndNonceHash));
+        bytes32 structHash = keccak256(
+            abi.encode(keccak256("Approve(bytes32 callDataAndNonceHash)"), calldataAndNonceHash)
+        );
         assembly {
             // Compute the digest.
             mstore(0x00, 0x1901000000000000) // Store "\x19\x01".
@@ -121,7 +130,12 @@ contract KernelWeightedECDSATest is KernelTestBase {
         return abi.encodePacked(bytes4(0x00000000), r0, s0, v0, r1, s1, v1, opSig);
     }
 
-    function getWrongSignature(UserOperation memory op) internal view override returns (bytes memory) {
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
         return abi.encodePacked(bytes4(0x00000000), entryPoint.signUserOpHash(vm, ownerKeys[0], op));
     }
 
@@ -145,12 +159,14 @@ contract KernelWeightedECDSATest is KernelTestBase {
         //        IKernel.execute.selector,
         //        address(defaultValidator),
         //        0,
-        //        abi.encodeWithSelector(ECDSAValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))),
+        //        abi.encodeWithSelector(ECDSAValidator.enable.selector,
+        // abi.encodePacked(address(0xdeadbeef))),
         //        Operation.Call
         //    )
         //);
         //performUserOperationWithSig(op);
-        //(address owner) = ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
+        //(address owner) =
+        // ECDSAValidator(address(defaultValidator)).ecdsaValidatorStorage(address(kernel));
         //assertEq(owner, address(0xdeadbeef), "owner should be 0xdeadbeef");
     }
 

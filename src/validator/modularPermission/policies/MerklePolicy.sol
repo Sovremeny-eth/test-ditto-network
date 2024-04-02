@@ -1,10 +1,10 @@
 pragma solidity ^0.8.0;
 
 import "../IPolicy.sol";
-import {Kernel} from "../../../Kernel.sol";
-import {ParamCondition, Operation} from "../../../common/Enums.sol";
-import {Call} from "../../../common/Structs.sol";
-import {MerkleProofLib} from "solady/utils/MerkleProofLib.sol";
+import { Kernel } from "../../../Kernel.sol";
+import { ParamCondition, Operation } from "../../../common/Enums.sol";
+import { Call } from "../../../common/Structs.sol";
+import { MerkleProofLib } from "solady/utils/MerkleProofLib.sol";
 
 struct Permission {
     address target;
@@ -21,11 +21,17 @@ struct ParamRule {
 }
 
 contract MerklePolicy is IPolicy {
-    error MerklePolicyError(uint256 code); // todo: should policy revert instead of returning SIG_VALIDATION_FAILED?
+    error MerklePolicyError(uint256 code); // todo: should policy revert instead of returning
+        // SIG_VALIDATION_FAILED?
 
-    mapping(address permissionValidator => mapping(bytes32 => mapping(address => bytes32))) public merkleRoot;
+    mapping(address permissionValidator => mapping(bytes32 => mapping(address => bytes32))) public
+        merkleRoot;
 
-    function registerPolicy(address kernel, bytes32 permissionId, bytes calldata policyData) external payable {
+    function registerPolicy(
+        address kernel,
+        bytes32 permissionId,
+        bytes calldata policyData
+    ) external payable {
         bytes32 root = bytes32(policyData[0:32]);
         merkleRoot[msg.sender][permissionId][kernel] = root;
     }
@@ -68,17 +74,25 @@ contract MerklePolicy is IPolicy {
         Call[] calldata calls;
         assembly {
             calls.offset := add(add(callData.offset, 0x24), calldataload(add(callData.offset, 4)))
-            calls.length := calldataload(add(add(callData.offset, 4), calldataload(add(callData.offset, 4))))
+            calls.length :=
+                calldataload(add(add(callData.offset, 4), calldataload(add(callData.offset, 4))))
         }
         uint256 i = 0;
         for (i = 0; i < calls.length; i++) {
             Call calldata call = calls[i];
             Permission calldata permission = _permissions[i];
             require(
-                permission.target == address(0) || call.to == permission.target, "SessionKeyValidator: target mismatch"
+                permission.target == address(0) || call.to == permission.target,
+                "SessionKeyValidator: target mismatch"
             );
-            require(uint256(bytes32(call.value)) <= permission.valueLimit, "SessionKeyValidator: value limit exceeded");
-            require(verifyPermission(call.data, permission), "SessionKeyValidator: permission verification failed");
+            require(
+                uint256(bytes32(call.value)) <= permission.valueLimit,
+                "SessionKeyValidator: value limit exceeded"
+            );
+            require(
+                verifyPermission(call.data, permission),
+                "SessionKeyValidator: permission verification failed"
+            );
             if (!MerkleProofLib.verify(_merkleProof[i], root, keccak256(abi.encode(permission)))) {
                 return true;
             }
@@ -86,7 +100,11 @@ contract MerklePolicy is IPolicy {
     }
 
     // to parse batch execute permissions
-    function _getPermissions(bytes calldata _sig) internal pure returns (Permission[] calldata permissions) {
+    function _getPermissions(bytes calldata _sig)
+        internal
+        pure
+        returns (Permission[] calldata permissions)
+    {
         assembly {
             permissions.offset := add(add(_sig.offset, 0x20), calldataload(_sig.offset))
             permissions.length := calldataload(add(_sig.offset, calldataload(_sig.offset)))
@@ -108,7 +126,8 @@ contract MerklePolicy is IPolicy {
     {
         assembly {
             permission := add(_sig.offset, calldataload(_sig.offset))
-            merkleProof.length := calldataload(add(_sig.offset, calldataload(add(_sig.offset, 0x20))))
+            merkleProof.length :=
+                calldataload(add(_sig.offset, calldataload(add(_sig.offset, 0x20))))
             merkleProof.offset := add(add(_sig.offset, 0x20), calldataload(add(_sig.offset, 0x20)))
         }
     }
@@ -121,32 +140,46 @@ contract MerklePolicy is IPolicy {
     ) internal pure returns (bool verifyFailed) {
         bool isExecute = bytes4(callData[0:4]) == Kernel.execute.selector;
         require(
-            _permission.target == address(0) || address(bytes20(callData[16:36])) == _permission.target,
+            _permission.target == address(0)
+                || address(bytes20(callData[16:36])) == _permission.target,
             "SessionKeyValidator: target mismatch"
         );
         if (isExecute) {
             require(
-                uint256(bytes32(callData[36:68])) <= _permission.valueLimit, "SessionKeyValidator: value limit exceeded"
+                uint256(bytes32(callData[36:68])) <= _permission.valueLimit,
+                "SessionKeyValidator: value limit exceeded"
             );
         } else {
-            require(_permission.operation == Operation.DelegateCall, "SessionKeyValidator: operation mismatch");
+            require(
+                _permission.operation == Operation.DelegateCall,
+                "SessionKeyValidator: operation mismatch"
+            );
         }
         bytes calldata data;
         uint8 dataParamOffset = isExecute ? 0x44 : 0x24;
         assembly {
-            let dataOffset := add(add(callData.offset, 0x04), calldataload(add(callData.offset, dataParamOffset)))
+            let dataOffset :=
+                add(add(callData.offset, 0x04), calldataload(add(callData.offset, dataParamOffset)))
             let length := calldataload(dataOffset)
             data.offset := add(dataOffset, 32)
             data.length := length
         }
-        require(verifyPermission(data, _permission), "SessionKeyValidator: permission verification failed");
+        require(
+            verifyPermission(data, _permission),
+            "SessionKeyValidator: permission verification failed"
+        );
         if (!MerkleProofLib.verify(_merkleProof, root, keccak256(abi.encode(_permission)))) {
             return true;
         }
     }
 
-    function verifyPermission(bytes calldata data, Permission calldata permission) internal pure returns (bool) {
-        if (bytes4(data[0:4]) != permission.sig) return false;
+    function verifyPermission(
+        bytes calldata data,
+        Permission calldata permission
+    ) internal pure returns (bool) {
+        if (bytes4(data[0:4]) != permission.sig) {
+            return false;
+        }
         for (uint256 i = 0; i < permission.rules.length; i++) {
             ParamRule calldata rule = permission.rules[i];
             bytes32 param = bytes32(data[4 + rule.offset:4 + rule.offset + 32]);
@@ -156,7 +189,8 @@ contract MerklePolicy is IPolicy {
                 return false;
             } else if (rule.condition == ParamCondition.LESS_THAN && param >= rule.param) {
                 return false;
-            } else if (rule.condition == ParamCondition.GREATER_THAN_OR_EQUAL && param < rule.param) {
+            } else if (rule.condition == ParamCondition.GREATER_THAN_OR_EQUAL && param < rule.param)
+            {
                 return false;
             } else if (rule.condition == ParamCondition.LESS_THAN_OR_EQUAL && param > rule.param) {
                 return false;

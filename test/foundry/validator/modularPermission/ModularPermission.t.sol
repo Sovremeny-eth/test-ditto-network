@@ -1,25 +1,25 @@
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
-import {IKernel} from "src/interfaces/IKernel.sol";
-import {Kernel} from "src/Kernel.sol";
-import {IKernelValidator} from "src/interfaces/IKernelValidator.sol";
-import {Operation} from "src/common/Enums.sol";
-import {toPermissionFlag} from "src/validator/modularPermission/PolicyConfig.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
+import { IKernel } from "src/interfaces/IKernel.sol";
+import { Kernel } from "src/Kernel.sol";
+import { IKernelValidator } from "src/interfaces/IKernelValidator.sol";
+import { Operation } from "src/common/Enums.sol";
+import { toPermissionFlag } from "src/validator/modularPermission/PolicyConfig.sol";
 import "src/validator/modularPermission/ModularPermissionValidator.sol";
 import "src/validator/modularPermission/signers/ECDSASigner.sol";
 import "src/validator/modularPermission/mock/MockPolicy.sol";
 import "src/validator/modularPermission/mock/MockSigner.sol";
 import "src/validator/modularPermission/policies/EIP712Policy.sol";
 import "forge-std/Test.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {TestExecutor} from "src/mock/TestExecutor.sol";
-import {TestValidator} from "src/mock/TestValidator.sol";
-import {KernelStorage} from "src/abstract/KernelStorage.sol";
-import {ERC4337Utils} from "src/utils/ERC4337Utils.sol";
-import {SignaturePolicy} from "src/validator/modularPermission/policies/SignaturePolicy.sol";
-import {EIP712} from "solady/utils/EIP712.sol";
-import {KERNEL_NAME, KERNEL_VERSION} from "src/common/Constants.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { TestExecutor } from "src/mock/TestExecutor.sol";
+import { TestValidator } from "src/mock/TestValidator.sol";
+import { KernelStorage } from "src/abstract/KernelStorage.sol";
+import { ERC4337Utils } from "src/utils/ERC4337Utils.sol";
+import { SignaturePolicy } from "src/validator/modularPermission/policies/SignaturePolicy.sol";
+import { EIP712 } from "solady/utils/EIP712.sol";
+import { KERNEL_NAME, KERNEL_VERSION } from "src/common/Constants.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -42,7 +42,7 @@ contract ModularPermissionE2ETest is KernelTestBase {
         _setExecutionDetail();
     }
 
-    function test_ignore() external {}
+    function test_ignore() external { }
 
     function getPermissionId() internal view returns (bytes32) {
         PolicyConfig[] memory p = new PolicyConfig[](2);
@@ -67,7 +67,13 @@ contract ModularPermissionE2ETest is KernelTestBase {
         return "";
     }
 
-    function getValidatorSignature(UserOperation memory) internal view virtual override returns (bytes memory) {
+    function getValidatorSignature(UserOperation memory)
+        internal
+        view
+        virtual
+        override
+        returns (bytes memory)
+    {
         return "";
     }
 
@@ -100,11 +106,20 @@ contract ModularPermissionE2ETest is KernelTestBase {
     }
 
     function signUserOp(UserOperation memory op) internal view override returns (bytes memory) {
-        return abi.encodePacked(bytes4(0x00000000), getPermissionId(), entryPoint.signUserOpHash(vm, ownerKey, op));
+        return abi.encodePacked(
+            bytes4(0x00000000), getPermissionId(), entryPoint.signUserOpHash(vm, ownerKey, op)
+        );
     }
 
-    function getWrongSignature(UserOperation memory op) internal view override returns (bytes memory) {
-        return abi.encodePacked(bytes4(0x00000000), getPermissionId(), entryPoint.signUserOpHash(vm, ownerKey + 1, op));
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
+        return abi.encodePacked(
+            bytes4(0x00000000), getPermissionId(), entryPoint.signUserOpHash(vm, ownerKey + 1, op)
+        );
     }
 
     function signHash(bytes32 hash) internal view override returns (bytes memory) {
@@ -156,9 +171,12 @@ contract ModularPermissionE2ETest is KernelTestBase {
         d.domainSeparator = keccak256("DOMAIN_SEPARATOR");
         d.typeHash = keccak256("TypeHash(bytes32 encodeData)");
         d.encodeData = bytes32(uint256(0xdeadbeef));
-        d.digest = _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, d.encodeData)));
+        d.digest =
+            _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, d.encodeData)));
         d.pd = new bytes[](1);
-        d.pd[0] = abi.encodePacked(d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.Equal), d.encodeData);
+        d.pd[0] = abi.encodePacked(
+            d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.Equal), d.encodeData
+        );
         bytes32 permissionId = ModularPermissionValidator(address(defaultValidator)).getPermissionId(
             toPermissionFlag(1), //flag
             signer,
@@ -184,8 +202,16 @@ contract ModularPermissionE2ETest is KernelTestBase {
         vm.stopPrank();
         ModularPermissionConfig memory config;
 
-        (config.nonce, config.flag, config.signer, config.firstPolicy, config.validAfter, config.validUntil) =
-            ModularPermissionValidator(address(defaultValidator)).permissions(permissionId, d.kernel);
+        (
+            config.nonce,
+            config.flag,
+            config.signer,
+            config.firstPolicy,
+            config.validAfter,
+            config.validUntil
+        ) = ModularPermissionValidator(address(defaultValidator)).permissions(
+            permissionId, d.kernel
+        );
         assertEq(config.nonce, uint128(1));
         assertEq(config.flag, toPermissionFlag(1));
         assertEq(ValidAfter.unwrap(config.validAfter), uint48(1));
@@ -193,7 +219,9 @@ contract ModularPermissionE2ETest is KernelTestBase {
         assertEq(address(config.signer), address(signer));
         bytes32 wrappedDigest = keccak256(
             abi.encodePacked(
-                "\x19\x01", ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)), d.digest
+                "\x19\x01",
+                ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)),
+                d.digest
             )
         );
 
@@ -225,9 +253,13 @@ contract ModularPermissionE2ETest is KernelTestBase {
         d.domainSeparator = keccak256("DOMAIN_SEPARATOR");
         d.typeHash = keccak256("TypeHash(bytes32 encodeData)");
         d.encodeData = bytes32(uint256(0xdeadbeef));
-        d.digest = _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, uint256(d.encodeData) + 1)));
+        d.digest = _hashTypedData(
+            d.domainSeparator, keccak256(abi.encode(d.typeHash, uint256(d.encodeData) + 1))
+        );
         d.pd = new bytes[](1);
-        d.pd[0] = abi.encodePacked(d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.GreaterThan), d.encodeData);
+        d.pd[0] = abi.encodePacked(
+            d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.GreaterThan), d.encodeData
+        );
         bytes32 permissionId = ModularPermissionValidator(address(defaultValidator)).getPermissionId(
             toPermissionFlag(1), //flag
             signer,
@@ -253,8 +285,16 @@ contract ModularPermissionE2ETest is KernelTestBase {
         vm.stopPrank();
         ModularPermissionConfig memory config;
 
-        (config.nonce, config.flag, config.signer, config.firstPolicy, config.validAfter, config.validUntil) =
-            ModularPermissionValidator(address(defaultValidator)).permissions(permissionId, d.kernel);
+        (
+            config.nonce,
+            config.flag,
+            config.signer,
+            config.firstPolicy,
+            config.validAfter,
+            config.validUntil
+        ) = ModularPermissionValidator(address(defaultValidator)).permissions(
+            permissionId, d.kernel
+        );
         assertEq(config.nonce, uint128(1));
         assertEq(config.flag, toPermissionFlag(1));
         assertEq(ValidAfter.unwrap(config.validAfter), uint48(1));
@@ -262,7 +302,9 @@ contract ModularPermissionE2ETest is KernelTestBase {
         assertEq(address(config.signer), address(signer));
         bytes32 wrappedDigest = keccak256(
             abi.encodePacked(
-                "\x19\x01", ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)), d.digest
+                "\x19\x01",
+                ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)),
+                d.digest
             )
         );
 
@@ -288,7 +330,9 @@ contract ModularPermissionE2ETest is KernelTestBase {
                 IKernel.execute.selector,
                 address(defaultValidator),
                 0,
-                abi.encodeWithSelector(IKernelValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))),
+                abi.encodeWithSelector(
+                    IKernelValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))
+                ),
                 Operation.Call
             )
         );
@@ -316,7 +360,9 @@ contract ModularPermissionE2ETest is KernelTestBase {
                 IKernel.execute.selector,
                 address(defaultValidator),
                 0,
-                abi.encodeWithSelector(IKernelValidator.disable.selector, abi.encodePacked(getPermissionId())),
+                abi.encodeWithSelector(
+                    IKernelValidator.disable.selector, abi.encodePacked(getPermissionId())
+                ),
                 Operation.Call
             )
         );
@@ -464,8 +510,14 @@ contract ModularPermissionUnitTest is Test {
 
         ModularPermissionConfig memory config;
 
-        (config.nonce, config.flag, config.signer, config.firstPolicy, config.validAfter, config.validUntil) =
-            validator.permissions(permissionId, kernel);
+        (
+            config.nonce,
+            config.flag,
+            config.signer,
+            config.firstPolicy,
+            config.validAfter,
+            config.validUntil
+        ) = validator.permissions(permissionId, kernel);
         assertEq(config.nonce, uint128(0));
         assertEq(config.flag, toPermissionFlag(0));
         assertEq(ValidAfter.unwrap(config.validAfter), uint48(1));
@@ -512,9 +564,12 @@ contract ModularPermissionUnitTest is Test {
         d.domainSeparator = keccak256("DOMAIN_SEPARATOR");
         d.typeHash = keccak256("TypeHash(bytes32 encodeData)");
         d.encodeData = bytes32(uint256(0xdeadbeef));
-        d.digest = _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, d.encodeData)));
+        d.digest =
+            _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, d.encodeData)));
         d.pd = new bytes[](1);
-        d.pd[0] = abi.encodePacked(d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.Equal), d.encodeData);
+        d.pd[0] = abi.encodePacked(
+            d.domainSeparator, d.typeHash, bytes4(0), uint8(ParamRule.Equal), d.encodeData
+        );
         bytes32 permissionId = validator.getPermissionId(
             toPermissionFlag(1), //flag
             mockSigner,
@@ -541,8 +596,14 @@ contract ModularPermissionUnitTest is Test {
 
         ModularPermissionConfig memory config;
 
-        (config.nonce, config.flag, config.signer, config.firstPolicy, config.validAfter, config.validUntil) =
-            validator.permissions(permissionId, d.kernel);
+        (
+            config.nonce,
+            config.flag,
+            config.signer,
+            config.firstPolicy,
+            config.validAfter,
+            config.validUntil
+        ) = validator.permissions(permissionId, d.kernel);
         assertEq(config.nonce, uint128(0));
         assertEq(config.flag, toPermissionFlag(1));
         assertEq(ValidAfter.unwrap(config.validAfter), uint48(1));
@@ -559,7 +620,13 @@ contract ModularPermissionUnitTest is Test {
                     ModularPermissionValidator.validateSignature.selector,
                     d.digest,
                     abi.encodePacked(
-                        permissionId, d.eip712, uint256(100), d.domainSeparator, d.typeHash, uint32(1), d.encodeData
+                        permissionId,
+                        d.eip712,
+                        uint256(100),
+                        d.domainSeparator,
+                        d.typeHash,
+                        uint32(1),
+                        d.encodeData
                     )
                 ),
                 d.digest,
@@ -570,7 +637,9 @@ contract ModularPermissionUnitTest is Test {
         require(success);
         vm.stopPrank();
         vm.startPrank(d.kernel);
-        d.digest = _hashTypedData(d.domainSeparator, keccak256(abi.encode(d.typeHash, uint256(d.encodeData) + 1)));
+        d.digest = _hashTypedData(
+            d.domainSeparator, keccak256(abi.encode(d.typeHash, uint256(d.encodeData) + 1))
+        );
         (success, ret) = address(validator).call(
             abi.encodePacked(
                 abi.encodeWithSelector(
@@ -634,8 +703,14 @@ contract ModularPermissionUnitTest is Test {
 
         ModularPermissionConfig memory config;
 
-        (config.nonce, config.flag, config.signer, config.firstPolicy, config.validAfter, config.validUntil) =
-            validator.permissions(permissionId, kernel);
+        (
+            config.nonce,
+            config.flag,
+            config.signer,
+            config.firstPolicy,
+            config.validAfter,
+            config.validUntil
+        ) = validator.permissions(permissionId, kernel);
         assertEq(config.nonce, uint128(0));
         assertEq(config.flag, MAX_FLAG);
         assertEq(ValidAfter.unwrap(config.validAfter), uint48(1));

@@ -6,6 +6,16 @@ solc = "0.8.21"
 optimizer = true
 optimizer_runs = 200
 
+[fmt]
+single_line_statement_blocks = "multi"
+multiline_func_header = "params_first"
+line_length = 100
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+quote_style = "double"
+wrap_comments = true
+
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 
 [rpc_endpoints]

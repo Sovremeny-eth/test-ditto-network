@@ -15,7 +15,7 @@ contract TestValidator is IKernelValidator {
 
     ValidationData public data;
 
-    function test_ignore() public {}
+    function test_ignore() public { }
 
     function sudoSetCaller(address _kernel, address _caller) external {
         caller[_kernel] = _caller;
@@ -27,16 +27,18 @@ contract TestValidator is IKernelValidator {
             : SIG_VALIDATION_FAILED;
     }
 
-    function validateSignature(bytes32, bytes calldata) external view override returns (ValidationData) {
+    function validateSignature(
+        bytes32,
+        bytes calldata
+    ) external view override returns (ValidationData) {
         return data;
     }
 
-    function validateUserOp(UserOperation calldata, bytes32 userOpHash, uint256)
-        external
-        payable
-        override
-        returns (ValidationData)
-    {
+    function validateUserOp(
+        UserOperation calldata,
+        bytes32 userOpHash,
+        uint256
+    ) external payable override returns (ValidationData) {
         emit TestValidateUserOp(userOpHash);
         return ValidationData.wrap(0);
     }

@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "solady/tokens/ERC721.sol";
 
 contract TestERC721 is ERC721 {
-    constructor() ERC721() {}
+    constructor() ERC721() { }
 
-    function test_ignore() public {}
+    function test_ignore() public { }
 
     function name() public pure override returns (string memory) {
         return "TestERC721";

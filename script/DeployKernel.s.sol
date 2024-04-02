@@ -14,14 +14,15 @@ contract DeployKernel is Script {
     address constant ECDSAVALIDATOR = 0xd9AB5096a832b9ce79914329DAEE236f8Eea0390;
     address constant EXPECTED_KERNEL_ADDRESS = 0x0DA6a956B9488eD4dd761E59f52FDc6c8068E6B5;
     address constant EXPECTED_KERNEL_LITE_ADDRESS = 0xbEdb61Be086F3f15eE911Cc9AB3EEa945DEbFa96;
-    address payable constant EXPECTED_KERNEL_FACTORY_ADDRESS = payable(0x5de4839a76cf55d0c90e2061ef4386d962E15ae3);
+    address payable constant EXPECTED_KERNEL_FACTORY_ADDRESS =
+        payable(0x5de4839a76cf55d0c90e2061ef4386d962E15ae3);
 
     function run() public {
         uint256 key = vm.envUint("DEPLOYER_PRIVATE_KEY");
         vm.startBroadcast(key);
         KernelFactory factory;
         if (EXPECTED_KERNEL_FACTORY_ADDRESS.code.length == 0) {
-            factory = new KernelFactory{salt: 0}(DEPLOYER, IEntryPoint(ENTRYPOINT_0_6));
+            factory = new KernelFactory{ salt: 0 }(DEPLOYER, IEntryPoint(ENTRYPOINT_0_6));
             console.log("KernelFactory address: %s", address(factory));
         } else {
             factory = KernelFactory(EXPECTED_KERNEL_FACTORY_ADDRESS);
@@ -31,7 +32,9 @@ contract DeployKernel is Script {
                 console.log("ECDSAVALIDATOR NOT DEPLOYED");
             } else {
                 KernelLiteECDSA kernellite;
-                kernellite = new KernelLiteECDSA{salt: 0}(IEntryPoint(ENTRYPOINT_0_6), IKernelValidator(ECDSAVALIDATOR));
+                kernellite = new KernelLiteECDSA{ salt: 0 }(
+                    IEntryPoint(ENTRYPOINT_0_6), IKernelValidator(ECDSAVALIDATOR)
+                );
                 console.log("Kernel Lite address: %s", address(kernellite));
             }
         }
@@ -41,7 +44,7 @@ contract DeployKernel is Script {
         }
         if (EXPECTED_KERNEL_ADDRESS.code.length == 0) {
             Kernel kernel;
-            kernel = new Kernel{salt: 0}(IEntryPoint(ENTRYPOINT_0_6));
+            kernel = new Kernel{ salt: 0 }(IEntryPoint(ENTRYPOINT_0_6));
             console.log("Kernel address: %s", address(kernel));
         }
         if (factory.isAllowedImplementation(EXPECTED_KERNEL_ADDRESS) == false) {

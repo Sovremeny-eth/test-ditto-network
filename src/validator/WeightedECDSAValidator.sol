@@ -1,11 +1,11 @@
 pragma solidity ^0.8.0;
 
 import "src/common/Types.sol";
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ECDSA} from "solady/utils/ECDSA.sol";
-import {EIP712} from "solady/utils/EIP712.sol";
-import {IKernelValidator} from "src/interfaces/IKernelValidator.sol";
-import {SIG_VALIDATION_FAILED} from "src/common/Constants.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { ECDSA } from "solady/utils/ECDSA.sol";
+import { EIP712 } from "solady/utils/EIP712.sol";
+import { IKernelValidator } from "src/interfaces/IKernelValidator.sol";
+import { SIG_VALIDATION_FAILED } from "src/common/Constants.sol";
 
 struct WeightedECDSAValidatorStorage {
     uint24 totalWeight;
@@ -43,18 +43,30 @@ struct VoteStorage {
 contract WeightedECDSAValidator is EIP712, IKernelValidator {
     mapping(address kernel => WeightedECDSAValidatorStorage) public weightedStorage;
     mapping(address guardian => mapping(address kernel => GuardianStorage)) public guardian;
-    mapping(bytes32 callDataAndNonceHash => mapping(address kernel => ProposalStorage)) public proposalStatus;
-    mapping(bytes32 callDataAndNonceHash => mapping(address guardian => mapping(address kernel => VoteStorage))) public
-        voteStatus;
+    mapping(bytes32 callDataAndNonceHash => mapping(address kernel => ProposalStorage)) public
+        proposalStatus;
+    mapping(
+        bytes32 callDataAndNonceHash
+            => mapping(address guardian => mapping(address kernel => VoteStorage))
+    ) public voteStatus;
 
     event GuardianAdded(address indexed guardian, address indexed kernel, uint24 weight);
     event GuardianRemoved(address indexed guardian, address indexed kernel);
 
-    function _domainNameAndVersion() internal pure override returns (string memory, string memory) {
+    function _domainNameAndVersion()
+        internal
+        pure
+        override
+        returns (string memory, string memory)
+    {
         return ("WeightedECDSAValidator", "0.0.3");
     }
 
-    function _addGuardians(address[] memory _guardians, uint24[] memory _weights, address _kernel) internal {
+    function _addGuardians(
+        address[] memory _guardians,
+        uint24[] memory _weights,
+        address _kernel
+    ) internal {
         uint24 totalWeight = weightedStorage[_kernel].totalWeight;
         require(_guardians.length == _weights.length, "Length mismatch");
         uint160 prevGuardian = uint160(weightedStorage[_kernel].firstGuardian);
@@ -64,8 +76,10 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
             require(_weights[i] != 0, "Weight cannot be 0");
             require(guardian[_guardians[i]][_kernel].weight == 0, "Guardian already enabled");
             require(uint160(_guardians[i]) < prevGuardian, "Guardians not sorted");
-            guardian[_guardians[i]][_kernel] =
-                GuardianStorage({weight: _weights[i], nextGuardian: weightedStorage[_kernel].firstGuardian});
+            guardian[_guardians[i]][_kernel] = GuardianStorage({
+                weight: _weights[i],
+                nextGuardian: weightedStorage[_kernel].firstGuardian
+            });
             weightedStorage[_kernel].firstGuardian = _guardians[i];
             totalWeight += _weights[i];
             prevGuardian = uint160(_guardians[i]);
@@ -98,10 +112,12 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         delete weightedStorage[msg.sender];
     }
 
-    function renew(address[] calldata _guardians, uint24[] calldata _weights, uint24 _threshold, uint48 _delay)
-        external
-        payable
-    {
+    function renew(
+        address[] calldata _guardians,
+        uint24[] calldata _weights,
+        uint24 _threshold,
+        uint48 _delay
+    ) external payable {
         require(weightedStorage[msg.sender].totalWeight != 0, "Not enabled");
         address currentGuardian = weightedStorage[msg.sender].firstGuardian;
         while (currentGuardian != address(uint160(type(uint160).max))) {
@@ -129,11 +145,16 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         (, bool isApproved) = getApproval(_kernel, _callDataAndNonceHash);
         if (isApproved) {
             proposal.status = ProposalStatus.Approved;
-            proposal.validAfter = ValidAfter.wrap(uint48(block.timestamp + weightedStorage[_kernel].delay));
+            proposal.validAfter =
+                ValidAfter.wrap(uint48(block.timestamp + weightedStorage[_kernel].delay));
         }
     }
 
-    function approveWithSig(bytes32 _callDataAndNonceHash, address _kernel, bytes calldata sigs) external {
+    function approveWithSig(
+        bytes32 _callDataAndNonceHash,
+        address _kernel,
+        bytes calldata sigs
+    ) external {
         uint256 sigCount = sigs.length / 65;
         require(weightedStorage[_kernel].threshold != 0, "Kernel not enabled");
         ProposalStorage storage proposal = proposalStatus[_callDataAndNonceHash][_kernel];
@@ -141,7 +162,12 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         for (uint256 i = 0; i < sigCount; i++) {
             address signer = ECDSA.recover(
                 _hashTypedData(
-                    keccak256(abi.encode(keccak256("Approve(bytes32 callDataAndNonceHash)"), _callDataAndNonceHash))
+                    keccak256(
+                        abi.encode(
+                            keccak256("Approve(bytes32 callDataAndNonceHash)"),
+                            _callDataAndNonceHash
+                        )
+                    )
                 ),
                 sigs[i * 65:(i + 1) * 65]
             );
@@ -153,7 +179,8 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         (, bool isApproved) = getApproval(_kernel, _callDataAndNonceHash);
         if (isApproved) {
             proposal.status = ProposalStatus.Approved;
-            proposal.validAfter = ValidAfter.wrap(uint48(block.timestamp + weightedStorage[_kernel].delay));
+            proposal.validAfter =
+                ValidAfter.wrap(uint48(block.timestamp + weightedStorage[_kernel].delay));
         }
     }
 
@@ -166,12 +193,13 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         proposal.status = ProposalStatus.Rejected;
     }
 
-    function validateUserOp(UserOperation calldata userOp, bytes32 userOpHash, uint256)
-        external
-        payable
-        returns (ValidationData validationData)
-    {
-        bytes32 callDataAndNonceHash = keccak256(abi.encode(userOp.sender, userOp.callData, userOp.nonce));
+    function validateUserOp(
+        UserOperation calldata userOp,
+        bytes32 userOpHash,
+        uint256
+    ) external payable returns (ValidationData validationData) {
+        bytes32 callDataAndNonceHash =
+            keccak256(abi.encode(userOp.sender, userOp.callData, userOp.nonce));
         ProposalStorage storage proposal = proposalStatus[callDataAndNonceHash][msg.sender];
         WeightedECDSAValidatorStorage storage strg = weightedStorage[msg.sender];
         if (strg.threshold == 0) {
@@ -193,7 +221,12 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
             for (uint256 i = 0; i < sigCount - 1 && !passed; i++) {
                 signer = ECDSA.recover(
                     _hashTypedData(
-                        keccak256(abi.encode(keccak256("Approve(bytes32 callDataAndNonceHash)"), callDataAndNonceHash))
+                        keccak256(
+                            abi.encode(
+                                keccak256("Approve(bytes32 callDataAndNonceHash)"),
+                                callDataAndNonceHash
+                            )
+                        )
                     ),
                     sig[i * 65:(i + 1) * 65]
                 );
@@ -223,8 +256,12 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
             }
             return SIG_VALIDATION_FAILED;
         } else if (proposal.status == ProposalStatus.Approved || passed) {
-            if (userOp.paymasterAndData.length == 0 || address(bytes20(userOp.paymasterAndData[0:20])) == address(0)) {
-                address signer = ECDSA.recover(ECDSA.toEthSignedMessageHash(userOpHash), userOp.signature);
+            if (
+                userOp.paymasterAndData.length == 0
+                    || address(bytes20(userOp.paymasterAndData[0:20])) == address(0)
+            ) {
+                address signer =
+                    ECDSA.recover(ECDSA.toEthSignedMessageHash(userOpHash), userOp.signature);
                 if (guardian[signer][msg.sender].weight != 0) {
                     proposal.status = ProposalStatus.Executed;
                     return packValidationData(proposal.validAfter, ValidUntil.wrap(0));
@@ -237,7 +274,10 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         return SIG_VALIDATION_FAILED;
     }
 
-    function getApproval(address kernel, bytes32 hash) public view returns (uint256 approvals, bool passed) {
+    function getApproval(
+        address kernel,
+        bytes32 hash
+    ) public view returns (uint256 approvals, bool passed) {
         WeightedECDSAValidatorStorage storage strg = weightedStorage[kernel];
         for (
             address currentGuardian = strg.firstGuardian;
@@ -255,7 +295,10 @@ contract WeightedECDSAValidator is EIP712, IKernelValidator {
         return false;
     }
 
-    function validateSignature(bytes32 hash, bytes calldata signature) external view returns (ValidationData) {
+    function validateSignature(
+        bytes32 hash,
+        bytes calldata signature
+    ) external view returns (ValidationData) {
         WeightedECDSAValidatorStorage storage strg = weightedStorage[msg.sender];
         if (strg.threshold == 0) {
             return SIG_VALIDATION_FAILED;

@@ -2,12 +2,16 @@
 pragma solidity ^0.8.0;
 
 // Importing necessary interfaces
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
-import {IKernelValidator} from "../interfaces/IKernelValidator.sol";
-import {IKernel} from "../interfaces/IKernel.sol";
-import {KERNEL_STORAGE_SLOT, KERNEL_STORAGE_SLOT_1, IMPLEMENTATION_SLOT} from "../common/Constants.sol";
-import {ExecutionDetail, WalletKernelStorage} from "../common/Structs.sol";
-import {ValidUntil, ValidAfter} from "../common/Types.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
+import { IKernelValidator } from "../interfaces/IKernelValidator.sol";
+import { IKernel } from "../interfaces/IKernel.sol";
+import {
+    KERNEL_STORAGE_SLOT,
+    KERNEL_STORAGE_SLOT_1,
+    IMPLEMENTATION_SLOT
+} from "../common/Constants.sol";
+import { ExecutionDetail, WalletKernelStorage } from "../common/Structs.sol";
+import { ValidUntil, ValidAfter } from "../common/Types.sol";
 
 /// @title Kernel Storage Contract
 /// @author taek<leekt216@gmail.com>
@@ -16,7 +20,8 @@ import {ValidUntil, ValidAfter} from "../common/Types.sol";
 abstract contract KernelStorage is IKernel {
     IEntryPoint public immutable entryPoint; // The entry point of the contract
 
-    // Modifier to check if the function is called by the entry point, the contract itself or the owner
+    // Modifier to check if the function is called by the entry point, the contract itself or the
+    // owner
     modifier onlyFromEntryPointOrSelf() {
         if (msg.sender != address(entryPoint) && msg.sender != address(this)) {
             revert NotAuthorizedCaller();
@@ -32,7 +37,10 @@ abstract contract KernelStorage is IKernel {
     }
 
     // Function to initialize the wallet kernel
-    function initialize(IKernelValidator _defaultValidator, bytes calldata _data) external payable override {
+    function initialize(
+        IKernelValidator _defaultValidator,
+        bytes calldata _data
+    ) external payable override {
         _setInitialData(_defaultValidator, _data);
     }
 
@@ -44,7 +52,12 @@ abstract contract KernelStorage is IKernel {
     }
 
     // Function to upgrade the contract to a new implementation
-    function upgradeTo(address _newImplementation) external payable override onlyFromEntryPointOrSelf {
+    function upgradeTo(address _newImplementation)
+        external
+        payable
+        override
+        onlyFromEntryPointOrSelf
+    {
         assembly {
             sstore(IMPLEMENTATION_SLOT, _newImplementation)
         }
@@ -77,7 +90,12 @@ abstract contract KernelStorage is IKernel {
         return getKernelStorage().lastDisabledTime;
     }
 
-    function getExecution(bytes4 _selector) external view override returns (ExecutionDetail memory) {
+    function getExecution(bytes4 _selector)
+        external
+        view
+        override
+        returns (ExecutionDetail memory)
+    {
         return getKernelStorage().execution[_selector];
     }
 
@@ -99,12 +117,10 @@ abstract contract KernelStorage is IKernel {
         emit ExecutionChanged(_selector, _executor, address(_validator));
     }
 
-    function setDefaultValidator(IKernelValidator _defaultValidator, bytes calldata _data)
-        external
-        payable
-        virtual
-        onlyFromEntryPointOrSelf
-    {
+    function setDefaultValidator(
+        IKernelValidator _defaultValidator,
+        bytes calldata _data
+    ) external payable virtual onlyFromEntryPointOrSelf {
         IKernelValidator oldValidator = getKernelStorage().defaultValidator;
         getKernelStorage().defaultValidator = _defaultValidator;
         emit DefaultValidatorChanged(address(oldValidator), address(_defaultValidator));
@@ -116,7 +132,10 @@ abstract contract KernelStorage is IKernel {
         getKernelStorage().lastDisabledTime = uint48(block.timestamp);
     }
 
-    function _setInitialData(IKernelValidator _defaultValidator, bytes calldata _data) internal virtual {
+    function _setInitialData(
+        IKernelValidator _defaultValidator,
+        bytes calldata _data
+    ) internal virtual {
         address validator;
         assembly {
             validator := shr(80, sload(KERNEL_STORAGE_SLOT_1))

@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
-import {ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE} from "I4337/artifacts/EntryPoint_0_6.sol";
-import {CREATOR_0_6_BYTECODE, CREATOR_0_6_ADDRESS} from "I4337/artifacts/EntryPoint_0_6.sol";
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {Kernel} from "../Kernel.sol";
-import {Operation} from "../common/Enums.sol";
-import {Compatibility} from "../abstract/Compatibility.sol";
-import {IKernel} from "../interfaces/IKernel.sol";
-import {KernelFactory} from "../factory/KernelFactory.sol";
-import {IKernelValidator} from "../interfaces/IKernelValidator.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
+import { ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE } from "I4337/artifacts/EntryPoint_0_6.sol";
+import { CREATOR_0_6_BYTECODE, CREATOR_0_6_ADDRESS } from "I4337/artifacts/EntryPoint_0_6.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { Kernel } from "../Kernel.sol";
+import { Operation } from "../common/Enums.sol";
+import { Compatibility } from "../abstract/Compatibility.sol";
+import { IKernel } from "../interfaces/IKernel.sol";
+import { KernelFactory } from "../factory/KernelFactory.sol";
+import { IKernelValidator } from "../interfaces/IKernelValidator.sol";
 
-import {Call, ExecutionDetail} from "../common/Structs.sol";
-import {ValidationData, ValidUntil, ValidAfter} from "../common/Types.sol";
-import {KERNEL_VERSION, KERNEL_NAME} from "../common/Constants.sol";
-import {ECDSA} from "solady/utils/ECDSA.sol";
+import { Call, ExecutionDetail } from "../common/Structs.sol";
+import { ValidationData, ValidUntil, ValidAfter } from "../common/Types.sol";
+import { KERNEL_VERSION, KERNEL_NAME } from "../common/Constants.sol";
+import { ECDSA } from "solady/utils/ECDSA.sol";
 
-import {ERC4337Utils} from "./ERC4337Utils.sol";
-import {Test} from "forge-std/Test.sol";
-import {console} from "forge-std/console.sol";
-import {TestValidator} from "../mock/TestValidator.sol";
-import {TestExecutor} from "../mock/TestExecutor.sol";
-import {TestERC721} from "../mock/TestERC721.sol";
-import {TestERC1155} from "../mock/TestERC1155.sol";
-import {TestCallee} from "../mock/TestCallee.sol";
+import { ERC4337Utils } from "./ERC4337Utils.sol";
+import { Test } from "forge-std/Test.sol";
+import { console } from "forge-std/console.sol";
+import { TestValidator } from "../mock/TestValidator.sol";
+import { TestExecutor } from "../mock/TestExecutor.sol";
+import { TestERC721 } from "../mock/TestERC721.sol";
+import { TestERC1155 } from "../mock/TestERC1155.sol";
+import { TestCallee } from "../mock/TestCallee.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -74,7 +74,11 @@ abstract contract KernelTestBase is Test {
 
     function getEnableData() internal view virtual returns (bytes memory);
 
-    function getValidatorSignature(UserOperation memory op) internal view virtual returns (bytes memory);
+    function getValidatorSignature(UserOperation memory op)
+        internal
+        view
+        virtual
+        returns (bytes memory);
 
     function getOwners() internal virtual returns (address[] memory _owners);
 
@@ -82,7 +86,11 @@ abstract contract KernelTestBase is Test {
 
     function signUserOp(UserOperation memory op) internal view virtual returns (bytes memory);
 
-    function getWrongSignature(UserOperation memory op) internal view virtual returns (bytes memory);
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        virtual
+        returns (bytes memory);
 
     function signHash(bytes32 hash) internal view virtual returns (bytes memory);
 
@@ -176,8 +184,14 @@ abstract contract KernelTestBase is Test {
     }
 
     function test_eip712() external {
-        (bytes1 fields, string memory name, string memory version,, address verifyingContract, bytes32 salt,) =
-            kernel.eip712Domain();
+        (
+            bytes1 fields,
+            string memory name,
+            string memory version,
+            ,
+            address verifyingContract,
+            bytes32 salt,
+        ) = kernel.eip712Domain();
         assertEq(fields, bytes1(hex"0f"));
         assertEq(name, KERNEL_NAME);
         assertEq(version, KERNEL_VERSION);
@@ -213,12 +227,15 @@ abstract contract KernelTestBase is Test {
     }
 
     function test_validate_signature() external virtual {
-        Kernel kernel2 = Kernel(payable(factory.createAccount(address(kernelImpl), getInitializeData(), 3)));
+        Kernel kernel2 =
+            Kernel(payable(factory.createAccount(address(kernelImpl), getInitializeData(), 3)));
         string memory message = "hello world";
         bytes32 hash = ECDSA.toEthSignedMessageHash(bytes(message));
         bytes32 digest = keccak256(
             abi.encodePacked(
-                "\x19\x01", ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)), hash
+                "\x19\x01",
+                ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)),
+                hash
             )
         );
         bytes memory sig = signHash(digest);
@@ -259,7 +276,7 @@ abstract contract KernelTestBase is Test {
     function test_should_emit_event_on_receive() external {
         vm.expectEmit(address(kernel));
         emit Received(address(this), 1000);
-        (bool success,) = address(kernel).call{value: 1000}("");
+        (bool success,) = address(kernel).call{ value: 1000 }("");
         assertEq(success, true);
     }
 
@@ -288,17 +305,23 @@ abstract contract KernelTestBase is Test {
         TestValidator newDefaultValidator = new TestValidator();
         bytes memory empty;
         UserOperation memory op = buildUserOperation(
-            abi.encodeWithSelector(IKernel.setDefaultValidator.selector, address(newDefaultValidator), empty)
+            abi.encodeWithSelector(
+                IKernel.setDefaultValidator.selector, address(newDefaultValidator), empty
+            )
         );
         performUserOperationWithSig(op);
-        assertEq(address(IKernel(address(kernel)).getDefaultValidator()), address(newDefaultValidator));
+        assertEq(
+            address(IKernel(address(kernel)).getDefaultValidator()), address(newDefaultValidator)
+        );
     }
 
     function test_disable_mode() external {
         vm.warp(1000);
         bytes memory empty;
         UserOperation memory op = buildUserOperation(
-            abi.encodeWithSelector(IKernel.disableMode.selector, bytes4(0x00000001), address(0), empty)
+            abi.encodeWithSelector(
+                IKernel.disableMode.selector, bytes4(0x00000001), address(0), empty
+            )
         );
         performUserOperationWithSig(op);
         assertEq(uint256(bytes32(IKernel(address(kernel)).getDisabledMode())), 1 << 224);
@@ -364,28 +387,37 @@ abstract contract KernelTestBase is Test {
         vm.warp(1000);
         bytes memory empty;
         UserOperation memory op = buildUserOperation(
-            abi.encodeWithSelector(IKernel.disableMode.selector, bytes4(0x00000001), address(0), empty)
+            abi.encodeWithSelector(
+                IKernel.disableMode.selector, bytes4(0x00000001), address(0), empty
+            )
         );
         performUserOperationWithSig(op);
 
         // try to run with mode 0x00000001
-        op = buildUserOperation(abi.encodeWithSelector(IKernel.disableMode.selector, bytes4(0x00000001)));
-        op.signature = abi.encodePacked(bytes4(0x00000001), entryPoint.signUserOpHash(vm, ownerKey, op));
+        op = buildUserOperation(
+            abi.encodeWithSelector(IKernel.disableMode.selector, bytes4(0x00000001))
+        );
+        op.signature =
+            abi.encodePacked(bytes4(0x00000001), entryPoint.signUserOpHash(vm, ownerKey, op));
         vm.expectRevert(
-            abi.encodeWithSelector(IEntryPoint.FailedOp.selector, 0, string.concat("AA23 reverted (or OOG)"))
+            abi.encodeWithSelector(
+                IEntryPoint.FailedOp.selector, 0, string.concat("AA23 reverted (or OOG)")
+            )
         );
         performUserOperation(op);
     }
 
     // validate user op
     function test_validateUserOp_fail_not_entryPoint() external {
-        UserOperation memory op = buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
+        UserOperation memory op =
+            buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
         vm.expectRevert(IKernel.NotEntryPoint.selector);
         kernel.validateUserOp(op, bytes32(hex"deadbeef"), uint256(100));
     }
 
     function test_validateUserOp_fail_invalid_mode() external {
-        UserOperation memory op = buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
+        UserOperation memory op =
+            buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
         op.signature = hex"00000003";
         vm.prank(address(entryPoint));
         ValidationData res = kernel.validateUserOp(op, bytes32(hex"deadbeef"), uint256(100));
@@ -393,12 +425,14 @@ abstract contract KernelTestBase is Test {
     }
 
     function test_sudo() external {
-        UserOperation memory op = buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
+        UserOperation memory op =
+            buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
         performUserOperationWithSig(op);
     }
 
     function test_sudo_wrongSig() external {
-        UserOperation memory op = buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
+        UserOperation memory op =
+            buildUserOperation(abi.encodeWithSelector(TestExecutor.doNothing.selector));
         op.signature = getWrongSignature(op);
         vm.expectRevert();
         performUserOperation(op);
@@ -409,10 +443,17 @@ abstract contract KernelTestBase is Test {
         UserOperation memory op = buildUserOperation(abi.encodePacked(executionSig));
 
         op.signature = buildEnableSignature(
-            op, executionSig, uint48(0), uint48(0), executionDetail.validator, executionDetail.executor
+            op,
+            executionSig,
+            uint48(0),
+            uint48(0),
+            executionDetail.validator,
+            executionDetail.executor
         );
         vm.expectEmit(true, true, true, false, address(entryPoint));
-        emit UserOperationEvent(entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0);
+        emit UserOperationEvent(
+            entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0
+        );
         performUserOperation(op);
     }
 
@@ -426,7 +467,9 @@ abstract contract KernelTestBase is Test {
     ) internal view returns (bytes memory sig) {
         require(address(executionDetail.validator) != address(0), "execution detail not set");
         bytes memory enableData = getEnableData();
-        bytes32 digest = getTypedDataHash(selector, validAfter, validUntil, address(validator), executor, enableData);
+        bytes32 digest = getTypedDataHash(
+            selector, validAfter, validUntil, address(validator), executor, enableData
+        );
         bytes memory enableSig = signHash(digest);
         sig = getValidatorSignature(op);
         sig = abi.encodePacked(
@@ -462,11 +505,14 @@ abstract contract KernelTestBase is Test {
     }
 
     function _setAddress() internal {
-        kernel = Kernel(payable(address(factory.createAccount(address(kernelImpl), getInitializeData(), 0))));
+        kernel = Kernel(
+            payable(address(factory.createAccount(address(kernelImpl), getInitializeData(), 0)))
+        );
         vm.deal(address(kernel), 1e30);
     }
 
-    // computes the hash of the fully encoded EIP-712 message for the domain, which can be used to recover the signer
+    // computes the hash of the fully encoded EIP-712 message for the domain, which can be used to
+    // recover the signer
     function getTypedDataHash(
         bytes4 sig,
         uint48 validUntil,
@@ -479,12 +525,18 @@ abstract contract KernelTestBase is Test {
             abi.encodePacked(
                 "\x19\x01",
                 ERC4337Utils._buildDomainSeparator(KERNEL_NAME, KERNEL_VERSION, address(kernel)),
-                ERC4337Utils.getStructHash(sig, validUntil, validAfter, validator, executor, enableData)
+                ERC4337Utils.getStructHash(
+                    sig, validUntil, validAfter, validator, executor, enableData
+                )
             )
         );
     }
 
-    function buildUserOperation(bytes memory callData) internal view returns (UserOperation memory op) {
+    function buildUserOperation(bytes memory callData)
+        internal
+        view
+        returns (UserOperation memory op)
+    {
         return entryPoint.fillUserOp(address(kernel), callData);
     }
 

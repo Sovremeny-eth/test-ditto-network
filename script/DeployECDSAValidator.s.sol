@@ -14,7 +14,7 @@ contract DeployKernel is Script {
         uint256 key = vm.envUint("DEPLOYER_PRIVATE_KEY");
         vm.startBroadcast(key);
         if (EXPECTED_VALIDATOR_ADDRESS.code.length == 0) {
-            ECDSAValidator validator = new ECDSAValidator{salt: 0}();
+            ECDSAValidator validator = new ECDSAValidator{ salt: 0 }();
             console.log("validator address: %s", address(validator));
         } else {
             console.log("validator address: %s", EXPECTED_VALIDATOR_ADDRESS);

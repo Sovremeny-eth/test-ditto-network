@@ -39,7 +39,8 @@ contract AdminLessERC1967Factory {
 
     /// @dev The ERC-1967 storage slot for the implementation in the proxy.
     /// `uint256(keccak256("eip1967.proxy.implementation")) - 1`.
-    uint256 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+    uint256 internal constant _IMPLEMENTATION_SLOT =
+        0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                      DEPLOY FUNCTIONS                      */
@@ -48,10 +49,11 @@ contract AdminLessERC1967Factory {
     /// and returns its deterministic address.
     /// The value passed into this function will be forwarded to the proxy.
     /// Then, calls the proxy with abi encoded `data`.
-    function deployDeterministicAndCall(address implementation, bytes32 salt, bytes calldata data)
-        internal
-        returns (address proxy)
-    {
+    function deployDeterministicAndCall(
+        address implementation,
+        bytes32 salt,
+        bytes calldata data
+    ) internal returns (address proxy) {
         /// @solidity memory-safe-assembly
         assembly {
             // If the salt does not start with the zero address or the caller.
@@ -64,7 +66,11 @@ contract AdminLessERC1967Factory {
     }
 
     /// @dev Deploys the proxy, with optionality to deploy deterministically with a `salt`.
-    function _deploy(address implementation, bytes32 salt, bytes calldata data) internal returns (address proxy) {
+    function _deploy(
+        address implementation,
+        bytes32 salt,
+        bytes calldata data
+    ) internal returns (address proxy) {
         bytes memory m = _initCode();
         /// @solidity memory-safe-assembly
         assembly {
@@ -155,24 +161,28 @@ contract AdminLessERC1967Factory {
              * Opcode      | Mnemonic       | Stack               | Memory                          |
              * -------------------------------------------------------------------------------------|
              *                                                                                      |
-             * ::: keep some values in stack :::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: keep some values in stack ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 3d          | RETURNDATASIZE | 0                   |                                 |
              * 3d          | RETURNDATASIZE | 0 0                 |                                 |
              *                                                                                      |
-             * ::: check if caller is factory ::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: check if caller is factory :::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 33          | CALLER         | c 0 0               |                                 |
              * 73 factory  | PUSH20 factory | f c 0 0             |                                 |
              * 14          | EQ             | isf 0 0             |                                 |
              * 60 0x57     | PUSH1 0x57     | dest isf 0 0        |                                 |
              * 57          | JUMPI          | 0 0                 |                                 |
              *                                                                                      |
-             * ::: copy calldata to memory :::::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: copy calldata to memory ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 36          | CALLDATASIZE   | cds 0 0             |                                 |
              * 3d          | RETURNDATASIZE | 0 cds 0 0           |                                 |
              * 3d          | RETURNDATASIZE | 0 0 cds 0 0         |                                 |
              * 37          | CALLDATACOPY   | 0 0                 | [0..calldatasize): calldata     |
              *                                                                                      |
-             * ::: delegatecall to implementation ::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: delegatecall to implementation :::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 36          | CALLDATASIZE   | cds 0 0             | [0..calldatasize): calldata     |
              * 3d          | RETURNDATASIZE | 0 cds 0 0           | [0..calldatasize): calldata     |
              * 7f slot     | PUSH32 slot    | s 0 cds 0 0         | [0..calldatasize): calldata     |
@@ -180,28 +190,43 @@ contract AdminLessERC1967Factory {
              * 5a          | GAS            | g i cds 0 0         | [0..calldatasize): calldata     |
              * f4          | DELEGATECALL   | succ                | [0..calldatasize): calldata     |
              *                                                                                      |
-             * ::: copy returndata to memory :::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: copy returndata to memory ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 3d          | RETURNDATASIZE | rds succ            | [0..calldatasize): calldata     |
              * 60 0x00     | PUSH1 0x00     | 0 rds succ          | [0..calldatasize): calldata     |
              * 80          | DUP1           | 0 0 rds succ        | [0..calldatasize): calldata     |
-             * 3e          | RETURNDATACOPY | succ                | [0..returndatasize): returndata |
+             * 3e          | RETURNDATACOPY | succ                | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: branch on delegatecall status :::::::::::::::::::::::::::::::::::::::::::::::::: |
-             * 60 0x52     | PUSH1 0x52     | dest succ           | [0..returndatasize): returndata |
-             * 57          | JUMPI          |                     | [0..returndatasize): returndata |
+             * ::: branch on delegatecall status ::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
+             * 60 0x52     | PUSH1 0x52     | dest succ           | [0..returndatasize): returndata
+             * |
+             * 57          | JUMPI          |                     | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: delegatecall failed, revert :::::::::::::::::::::::::::::::::::::::::::::::::::: |
-             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata |
-             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata |
-             * fd          | REVERT         |                     | [0..returndatasize): returndata |
+             * ::: delegatecall failed, revert ::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
+             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata
+             * |
+             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata
+             * |
+             * fd          | REVERT         |                     | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: delegatecall succeeded, return ::::::::::::::::::::::::::::::::::::::::::::::::: |
-             * 5b          | JUMPDEST       |                     | [0..returndatasize): returndata |
-             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata |
-             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata |
-             * f3          | RETURN         |                     | [0..returndatasize): returndata |
+             * ::: delegatecall succeeded, return :::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
+             * 5b          | JUMPDEST       |                     | [0..returndatasize): returndata
+             * |
+             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata
+             * |
+             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata
+             * |
+             * f3          | RETURN         |                     | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: set new implementation (caller is factory) ::::::::::::::::::::::::::::::::::::: |
+             * ::: set new implementation (caller is factory) :::::::::::::::::::::::::::::::::::::
+             * |
              * 5b          | JUMPDEST       | 0 0                 |                                 |
              * 3d          | RETURNDATASIZE | 0 0 0               |                                 |
              * 35          | CALLDATALOAD   | impl 0 0            |                                 |
@@ -209,7 +234,8 @@ contract AdminLessERC1967Factory {
              * 35          | CALLDATALOAD   | slot impl 0 0       |                                 |
              * 55          | SSTORE         | 0 0                 |                                 |
              *                                                                                      |
-             * ::: no extra calldata, return :::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: no extra calldata, return ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 60 0x40     | PUSH1 0x40     | 2w 0 0              |                                 |
              * 80          | DUP1           | 2w 2w 0 0           |                                 |
              * 36          | CALLDATASIZE   | cds 2w 2w 0 0       |                                 |
@@ -218,7 +244,8 @@ contract AdminLessERC1967Factory {
              * 60 0x52     | PUSH1 0x52     | dest lte 2w 0 0     |                                 |
              * 57          | JUMPI          | 2w 0 0              |                                 |
              *                                                                                      |
-             * ::: copy extra calldata to memory :::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: copy extra calldata to memory ::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 36          | CALLDATASIZE   | cds 2w 0 0          |                                 |
              * 03          | SUB            | t 0 0               |                                 |
              * 80          | DUP1           | t t 0 0             |                                 |
@@ -226,27 +253,37 @@ contract AdminLessERC1967Factory {
              * 3d          | RETURNDATASIZE | 0 2w t t 0 0        |                                 |
              * 37          | CALLDATACOPY   | t 0 0               | [0..t): extra calldata          |
              *                                                                                      |
-             * ::: delegatecall to implementation ::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: delegatecall to implementation :::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 3d          | RETURNDATASIZE | 0 t 0 0             | [0..t): extra calldata          |
              * 3d          | RETURNDATASIZE | 0 0 t 0 0           | [0..t): extra calldata          |
              * 35          | CALLDATALOAD   | i t 0 0             | [0..t): extra calldata          |
              * 5a          | GAS            | g i t 0 0           | [0..t): extra calldata          |
              * f4          | DELEGATECALL   | succ                | [0..t): extra calldata          |
              *                                                                                      |
-             * ::: copy returndata to memory :::::::::::::::::::::::::::::::::::::::::::::::::::::: |
+             * ::: copy returndata to memory ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
              * 3d          | RETURNDATASIZE | rds succ            | [0..t): extra calldata          |
              * 60 0x00     | PUSH1 0x00     | 0 rds succ          | [0..t): extra calldata          |
              * 80          | DUP1           | 0 0 rds succ        | [0..t): extra calldata          |
-             * 3e          | RETURNDATACOPY | succ                | [0..returndatasize): returndata |
+             * 3e          | RETURNDATACOPY | succ                | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: branch on delegatecall status :::::::::::::::::::::::::::::::::::::::::::::::::: |
-             * 60 0x52     | PUSH1 0x52     | dest succ           | [0..returndatasize): returndata |
-             * 57          | JUMPI          |                     | [0..returndatasize): returndata |
+             * ::: branch on delegatecall status ::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
+             * 60 0x52     | PUSH1 0x52     | dest succ           | [0..returndatasize): returndata
+             * |
+             * 57          | JUMPI          |                     | [0..returndatasize): returndata
+             * |
              *                                                                                      |
-             * ::: delegatecall failed, revert :::::::::::::::::::::::::::::::::::::::::::::::::::: |
-             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata |
-             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata |
-             * fd          | REVERT         |                     | [0..returndatasize): returndata |
+             * ::: delegatecall failed, revert ::::::::::::::::::::::::::::::::::::::::::::::::::::
+             * |
+             * 3d          | RETURNDATASIZE | rds                 | [0..returndatasize): returndata
+             * |
+             * 60 0x00     | PUSH1 0x00     | 0 rds               | [0..returndatasize): returndata
+             * |
+             * fd          | REVERT         |                     | [0..returndatasize): returndata
+             * |
              * -------------------------------------------------------------------------------------+
              */
             m := mload(0x40)

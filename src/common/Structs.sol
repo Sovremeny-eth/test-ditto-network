@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import {IKernelValidator} from "../interfaces/IKernelValidator.sol";
-import {ParamCondition, Operation} from "./Enums.sol";
-import {ValidAfter, ValidUntil} from "./Types.sol";
+import { IKernelValidator } from "../interfaces/IKernelValidator.sol";
+import { ParamCondition, Operation } from "./Enums.sol";
+import { ValidAfter, ValidUntil } from "./Types.sol";
 
 // Defining a struct for execution details
 struct ExecutionDetail {
@@ -24,7 +24,8 @@ struct WalletKernelStorage {
     bytes4 disabledMode; // Mode which is currently disabled
     uint48 lastDisabledTime; // Last time when a mode was disabled
     IKernelValidator defaultValidator; // Default validator for the wallet
-    mapping(bytes4 => ExecutionDetail) execution; // Mapping of function selectors to execution details
+    mapping(bytes4 => ExecutionDetail) execution; // Mapping of function selectors to execution
+        // details
 }
 
 // Param Rule for session key
@@ -64,6 +65,7 @@ struct SessionData {
     bytes32 merkleRoot;
     ValidAfter validAfter;
     ValidUntil validUntil;
-    address paymaster; // address(0) means accept userOp without paymaster, address(1) means reject userOp with paymaster, other address means accept userOp with paymaster with the address
+    address paymaster; // address(0) means accept userOp without paymaster, address(1) means reject
+        // userOp with paymaster, other address means accept userOp with paymaster with the address
     uint256 nonce;
 }

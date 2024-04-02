@@ -1,9 +1,9 @@
 pragma solidity ^0.8.0;
 
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ValidationData, ValidUntil, ValidAfter, packValidationData} from "src/common/Types.sol";
-import {SIG_VALIDATION_FAILED} from "src/common/Constants.sol";
-import {IPolicy} from "../IPolicy.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { ValidationData, ValidUntil, ValidAfter, packValidationData } from "src/common/Types.sol";
+import { SIG_VALIDATION_FAILED } from "src/common/Constants.sol";
+import { IPolicy } from "../IPolicy.sol";
 
 contract MockPolicy is IPolicy {
     ValidationData public validationData;
@@ -23,12 +23,12 @@ contract MockPolicy is IPolicy {
         policyData = data;
     }
 
-    function checkUserOpPolicy(address, bytes32 permissionId, UserOperation calldata, bytes calldata)
-        external
-        payable
-        override
-        returns (ValidationData)
-    {
+    function checkUserOpPolicy(
+        address,
+        bytes32 permissionId,
+        UserOperation calldata,
+        bytes calldata
+    ) external payable override returns (ValidationData) {
         count[permissionId]++;
         return validationData;
     }

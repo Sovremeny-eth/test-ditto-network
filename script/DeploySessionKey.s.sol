@@ -11,7 +11,7 @@ contract DeploySessionKey is Script {
         address deployer = vm.envAddress("DEPLOYER");
         vm.startBroadcast(deployer);
         console.log("deploying SessionKeyValidator");
-        SessionKeyValidator validator = new SessionKeyValidator{salt: 0}();
+        SessionKeyValidator validator = new SessionKeyValidator{ salt: 0 }();
         console.log("validator address: %s", address(validator));
         vm.stopBroadcast();
     }

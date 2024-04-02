@@ -6,7 +6,7 @@ contract TestCallee {
     uint256 public sent;
     bytes public message;
 
-    receive() external payable {}
+    receive() external payable { }
 
     fallback() external payable {
         message = msg.data;
@@ -14,14 +14,15 @@ contract TestCallee {
         caller = msg.sender;
     }
 
-    function test_ignore() external {}
+    function test_ignore() external { }
 
     function addTester(uint256 a, uint256 b) external payable {
         result = a + b + msg.value;
     }
 
     function transferErc20Tester(address token, address to, uint256 amount) external {
-        (bool success, bytes memory data) = token.call(abi.encodeWithSignature("transfer(address,uint256)", to, amount));
+        (bool success, bytes memory data) =
+            token.call(abi.encodeWithSignature("transfer(address,uint256)", to, amount));
         require(success, string(data));
     }
 
@@ -35,5 +36,5 @@ contract TestCallee {
         hex"0000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
     }
 
-    function notThis() external {}
+    function notThis() external { }
 }

@@ -8,7 +8,11 @@ function _getRoot(bytes32[] memory data) pure returns (bytes32) {
     return data[0];
 }
 
-function _getProof(bytes32[] memory data, uint256 nodeIndex, bool wrongProof) pure returns (bytes32[] memory) {
+function _getProof(
+    bytes32[] memory data,
+    uint256 nodeIndex,
+    bool wrongProof
+) pure returns (bytes32[] memory) {
     require(data.length > 1);
 
     bytes32[] memory result = new bytes32[](64);

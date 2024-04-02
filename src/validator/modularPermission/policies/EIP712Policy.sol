@@ -6,7 +6,8 @@ import "../IPolicy.sol";
 // only allow checking,
 // 1. domain separator
 // 2. typeHash
-// 3. encodeData => only allows 32 bytes of parameter in encodeData, if you are dealing with dynamic value, you need to pass in the keccak256 hash of the value
+// 3. encodeData => only allows 32 bytes of parameter in encodeData, if you are dealing with dynamic
+// value, you need to pass in the keccak256 hash of the value
 struct EncodeDataRule {
     uint32 index;
     bytes32 value;
@@ -31,16 +32,24 @@ enum ParamRule {
 
 contract EIP712Policy is IPolicy {
     mapping(
-        bytes32 permissionId => mapping(address permissionValidator => mapping(address kernel => AllowedEIP712Params))
+        bytes32 permissionId
+            => mapping(
+                address permissionValidator => mapping(address kernel => AllowedEIP712Params)
+            )
     ) public eip712Param;
     mapping(
         bytes32 permissionId
             => mapping(
-                address permissionValidator => mapping(bytes32 encodeData => mapping(address kernel => EncodeDataRule))
+                address permissionValidator
+                    => mapping(bytes32 encodeData => mapping(address kernel => EncodeDataRule))
             )
     ) public nextEncodeData;
 
-    function registerPolicy(address _kernel, bytes32 _permissionId, bytes calldata _data) external payable override {
+    function registerPolicy(
+        address _kernel,
+        bytes32 _permissionId,
+        bytes calldata _data
+    ) external payable override {
         bytes32 domainSeparator = bytes32(_data[0:32]);
         bytes32 typeHash = bytes32(_data[32:64]);
         uint32 index = uint32(bytes4(_data[64:68]));
@@ -48,7 +57,8 @@ contract EIP712Policy is IPolicy {
         bytes32 encodeData = bytes32(_data[69:101]);
         uint256 cursor = 101;
         EncodeDataRule memory encodeDataRule = EncodeDataRule(index, encodeData, rule);
-        eip712Param[_permissionId][msg.sender][_kernel] = AllowedEIP712Params(domainSeparator, typeHash, encodeDataRule);
+        eip712Param[_permissionId][msg.sender][_kernel] =
+            AllowedEIP712Params(domainSeparator, typeHash, encodeDataRule);
         while (cursor <= _data.length - 37) {
             index = uint32(bytes4(_data[cursor:cursor + 4]));
             rule = ParamRule(uint8(bytes1(_data[cursor + 4])));
@@ -77,7 +87,8 @@ contract EIP712Policy is IPolicy {
         bytes32 _rawHash,
         bytes calldata _signature
     ) external view override returns (ValidationData) {
-        AllowedEIP712Params memory allowedEIP712Params = eip712Param[_permissionId][msg.sender][_kernel];
+        AllowedEIP712Params memory allowedEIP712Params =
+            eip712Param[_permissionId][msg.sender][_kernel];
         bytes32[] memory encodedData = new bytes32[](uint32(bytes4(_signature[64:68])));
         uint256 cursor = 68;
         for (uint32 i = 0; i < encodedData.length; i++) {

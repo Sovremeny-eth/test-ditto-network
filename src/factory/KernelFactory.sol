@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {AdminLessERC1967Factory} from "./AdminLessERC1967Factory.sol";
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
-import {Ownable} from "solady/auth/Ownable.sol";
+import { AdminLessERC1967Factory } from "./AdminLessERC1967Factory.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
+import { Ownable } from "solady/auth/Ownable.sol";
 
 contract KernelFactory is AdminLessERC1967Factory, Ownable {
     /// Error throwned when an implementation isn't allowed
@@ -28,27 +28,34 @@ contract KernelFactory is AdminLessERC1967Factory, Ownable {
         entryPoint = _entryPoint;
     }
 
-    function createAccount(address _implementation, bytes calldata _data, uint256 _index)
-        external
-        payable
-        returns (address proxy)
-    {
+    function createAccount(
+        address _implementation,
+        bytes calldata _data,
+        uint256 _index
+    ) external payable returns (address proxy) {
         // Ensure that the implementation contract is allowed
-        if (!isAllowedImplementation[_implementation]) revert ImplementationNotAllowed();
+        if (!isAllowedImplementation[_implementation]) {
+            revert ImplementationNotAllowed();
+        }
         // Create the salt for the account
-        bytes32 salt = bytes32(uint256(keccak256(abi.encodePacked(_data, _index))) & type(uint96).max);
+        bytes32 salt =
+            bytes32(uint256(keccak256(abi.encodePacked(_data, _index))) & type(uint96).max);
         // Deploy the proxy and return it's address
         proxy = deployDeterministicAndCall(_implementation, salt, _data);
     }
 
-    function getAccountAddress(bytes calldata _data, uint256 _index) public view returns (address) {
-        bytes32 salt = bytes32(uint256(keccak256(abi.encodePacked(_data, _index))) & type(uint96).max);
+    function getAccountAddress(
+        bytes calldata _data,
+        uint256 _index
+    ) public view returns (address) {
+        bytes32 salt =
+            bytes32(uint256(keccak256(abi.encodePacked(_data, _index))) & type(uint96).max);
         return predictDeterministicAddress(salt);
     }
 
     // stake functions
     function addStake(uint32 unstakeDelaySec) external payable onlyOwner {
-        entryPoint.addStake{value: msg.value}(unstakeDelaySec);
+        entryPoint.addStake{ value: msg.value }(unstakeDelaySec);
     }
 
     function unlockStake() external onlyOwner {

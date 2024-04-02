@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
 import "src/Kernel.sol";
 import "src/validator/ECDSATypedValidator.sol";
 // test artifacts
 // test utils
 import "forge-std/Test.sol";
-import {ERC4337Utils} from "src/utils/ERC4337Utils.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {TestExecutor} from "src/mock/TestExecutor.sol";
-import {TestValidator} from "src/mock/TestValidator.sol";
-import {IKernel} from "src/interfaces/IKernel.sol";
+import { ERC4337Utils } from "src/utils/ERC4337Utils.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { TestExecutor } from "src/mock/TestExecutor.sol";
+import { TestValidator } from "src/mock/TestValidator.sol";
+import { IKernel } from "src/interfaces/IKernel.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -29,7 +29,7 @@ contract KernelECDSATypedTest is KernelTestBase {
         _setExecutionDetail();
     }
 
-    function test_ignore() external {}
+    function test_ignore() external { }
 
     function _setExecutionDetail() internal virtual override {
         executionDetail.executor = address(new TestExecutor());
@@ -41,7 +41,13 @@ contract KernelECDSATypedTest is KernelTestBase {
         return "";
     }
 
-    function getValidatorSignature(UserOperation memory) internal view virtual override returns (bytes memory) {
+    function getValidatorSignature(UserOperation memory)
+        internal
+        view
+        virtual
+        override
+        returns (bytes memory)
+    {
         return "";
     }
 
@@ -52,15 +58,25 @@ contract KernelECDSATypedTest is KernelTestBase {
     }
 
     function getInitializeData() internal view override returns (bytes memory) {
-        return abi.encodeWithSelector(KernelStorage.initialize.selector, defaultValidator, abi.encodePacked(owner));
+        return abi.encodeWithSelector(
+            KernelStorage.initialize.selector, defaultValidator, abi.encodePacked(owner)
+        );
     }
 
     function signUserOp(UserOperation memory op) internal view override returns (bytes memory) {
-        return abi.encodePacked(bytes4(0x00000000), _generateUserOpSignature(entryPoint, op, ownerKey));
+        return
+            abi.encodePacked(bytes4(0x00000000), _generateUserOpSignature(entryPoint, op, ownerKey));
     }
 
-    function getWrongSignature(UserOperation memory op) internal view override returns (bytes memory) {
-        return abi.encodePacked(bytes4(0x00000000), _generateUserOpSignature(entryPoint, op, ownerKey + 1));
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
+        return abi.encodePacked(
+            bytes4(0x00000000), _generateUserOpSignature(entryPoint, op, ownerKey + 1)
+        );
     }
 
     function signHash(bytes32 _hash) internal view override returns (bytes memory) {
@@ -77,7 +93,9 @@ contract KernelECDSATypedTest is KernelTestBase {
                 IKernel.execute.selector,
                 address(defaultValidator),
                 0,
-                abi.encodeWithSelector(ECDSATypedValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))),
+                abi.encodeWithSelector(
+                    ECDSATypedValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))
+                ),
                 Operation.Call
             )
         );
@@ -106,14 +124,15 @@ contract KernelECDSATypedTest is KernelTestBase {
     /* -------------------------------------------------------------------------- */
 
     /// @notice The type hash used for kernel user op validation
-    bytes32 constant USER_OP_TYPEHASH = keccak256("AllowUserOp(address owner,address kernelWallet,bytes32 userOpHash)");
+    bytes32 constant USER_OP_TYPEHASH =
+        keccak256("AllowUserOp(address owner,address kernelWallet,bytes32 userOpHash)");
 
     /// @dev Generate the signature for a user op
-    function _generateUserOpSignature(IEntryPoint _entryPoint, UserOperation memory _op, uint256 _privateKey)
-        internal
-        view
-        returns (bytes memory)
-    {
+    function _generateUserOpSignature(
+        IEntryPoint _entryPoint,
+        UserOperation memory _op,
+        uint256 _privateKey
+    ) internal view returns (bytes memory) {
         // Get the kernel private key owner address
         address owner_ = vm.addr(_privateKey);
 
@@ -124,7 +143,9 @@ contract KernelECDSATypedTest is KernelTestBase {
         bytes32 domainSeparator = ecdsaTypedValidator.getDomainSeperator();
         bytes32 typedMsgHash = keccak256(
             abi.encodePacked(
-                "\x19\x01", domainSeparator, keccak256(abi.encode(USER_OP_TYPEHASH, owner_, _op.sender, userOpHash))
+                "\x19\x01",
+                domainSeparator,
+                keccak256(abi.encode(USER_OP_TYPEHASH, owner_, _op.sender, userOpHash))
             )
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(_privateKey, typedMsgHash);
@@ -132,19 +153,23 @@ contract KernelECDSATypedTest is KernelTestBase {
     }
 
     /// @notice The type hash used for kernel signature validation
-    bytes32 constant SIGNATURE_TYPEHASH = keccak256("KernelSignature(address owner,address kernelWallet,bytes32 hash)");
+    bytes32 constant SIGNATURE_TYPEHASH =
+        keccak256("KernelSignature(address owner,address kernelWallet,bytes32 hash)");
 
     /// @dev Generate the signature for a given hash for a kernel account
-    function _generateHashSignature(bytes32 _hash, address _owner, address _kernel, uint256 _privateKey)
-        internal
-        view
-        returns (bytes memory)
-    {
+    function _generateHashSignature(
+        bytes32 _hash,
+        address _owner,
+        address _kernel,
+        uint256 _privateKey
+    ) internal view returns (bytes memory) {
         // Get the validator domain separator
         bytes32 domainSeparator = ecdsaTypedValidator.getDomainSeperator();
         bytes32 typedMsgHash = keccak256(
             abi.encodePacked(
-                "\x19\x01", domainSeparator, keccak256(abi.encode(SIGNATURE_TYPEHASH, _owner, _kernel, _hash))
+                "\x19\x01",
+                domainSeparator,
+                keccak256(abi.encode(SIGNATURE_TYPEHASH, _owner, _kernel, _hash))
             )
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(_privateKey, typedMsgHash);

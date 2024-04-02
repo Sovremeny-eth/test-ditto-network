@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ECDSA} from "solady/utils/ECDSA.sol";
-import {IKernelValidator} from "../interfaces/IKernelValidator.sol";
-import {ValidationData} from "../common/Types.sol";
-import {SIG_VALIDATION_FAILED} from "../common/Constants.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
+import { ECDSA } from "solady/utils/ECDSA.sol";
+import { IKernelValidator } from "../interfaces/IKernelValidator.sol";
+import { ValidationData } from "../common/Types.sol";
+import { SIG_VALIDATION_FAILED } from "../common/Constants.sol";
 
 struct ECDSAValidatorStorage {
     address owner;
@@ -28,12 +28,11 @@ contract ECDSAValidator is IKernelValidator {
         emit OwnerChanged(msg.sender, oldOwner, owner);
     }
 
-    function validateUserOp(UserOperation calldata _userOp, bytes32 _userOpHash, uint256)
-        external
-        payable
-        override
-        returns (ValidationData validationData)
-    {
+    function validateUserOp(
+        UserOperation calldata _userOp,
+        bytes32 _userOpHash,
+        uint256
+    ) external payable override returns (ValidationData validationData) {
         address owner = ecdsaValidatorStorage[_userOp.sender].owner;
         bytes32 hash = ECDSA.toEthSignedMessageHash(_userOpHash);
         if (owner == ECDSA.recover(hash, _userOp.signature)) {
@@ -44,7 +43,10 @@ contract ECDSAValidator is IKernelValidator {
         }
     }
 
-    function validateSignature(bytes32 hash, bytes calldata signature) public view override returns (ValidationData) {
+    function validateSignature(
+        bytes32 hash,
+        bytes calldata signature
+    ) public view override returns (ValidationData) {
         address owner = ecdsaValidatorStorage[msg.sender].owner;
         if (owner == ECDSA.recover(hash, signature)) {
             return ValidationData.wrap(0);

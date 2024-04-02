@@ -5,10 +5,17 @@ import "../IPolicy.sol";
 contract SignaturePolicy is IPolicy {
     mapping(
         address permissionValidator
-            => mapping(bytes32 permissionId => mapping(address requestor => mapping(address kernel => bool)))
+            => mapping(
+                bytes32 permissionId
+                    => mapping(address requestor => mapping(address kernel => bool))
+            )
     ) public allowedRequestor;
 
-    function registerPolicy(address kernel, bytes32 permissionId, bytes calldata policyData) external payable {
+    function registerPolicy(
+        address kernel,
+        bytes32 permissionId,
+        bytes calldata policyData
+    ) external payable {
         address[] memory callers = abi.decode(policyData, (address[]));
         for (uint256 i = 0; i < callers.length; i++) {
             if (callers[i] == address(0)) {

@@ -1,11 +1,15 @@
 pragma solidity ^0.8.0;
 
-import {ValidationData, ValidUntil, ValidAfter, packValidationData} from "src/common/Types.sol";
-import {SIG_VALIDATION_FAILED} from "src/common/Constants.sol";
-import {UserOperation} from "I4337/interfaces/UserOperation.sol";
+import { ValidationData, ValidUntil, ValidAfter, packValidationData } from "src/common/Types.sol";
+import { SIG_VALIDATION_FAILED } from "src/common/Constants.sol";
+import { UserOperation } from "I4337/interfaces/UserOperation.sol";
 
 interface IPolicy {
-    function registerPolicy(address kernel, bytes32 permissionId, bytes calldata policyData) external payable;
+    function registerPolicy(
+        address kernel,
+        bytes32 permissionId,
+        bytes calldata policyData
+    ) external payable;
     function checkUserOpPolicy(
         address kernel,
         bytes32 permissionId,

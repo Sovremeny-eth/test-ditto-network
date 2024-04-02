@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
+import { IEntryPoint } from "I4337/interfaces/IEntryPoint.sol";
 import "src/Kernel.sol";
 import "src/lite/KernelLiteECDSA.sol";
 // test artifacts
 // test utils
 import "forge-std/Test.sol";
-import {ERC4337Utils} from "src/utils/ERC4337Utils.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {TestExecutor} from "src/mock/TestExecutor.sol";
-import {TestValidator} from "src/mock/TestValidator.sol";
-import {ECDSAValidator} from "src/validator/ECDSAValidator.sol";
+import { ERC4337Utils } from "src/utils/ERC4337Utils.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { TestExecutor } from "src/mock/TestExecutor.sol";
+import { TestValidator } from "src/mock/TestValidator.sol";
+import { ECDSAValidator } from "src/validator/ECDSAValidator.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -40,7 +40,13 @@ contract KernelECDSATest is KernelTestBase {
         return "";
     }
 
-    function getValidatorSignature(UserOperation memory) internal view virtual override returns (bytes memory) {
+    function getValidatorSignature(UserOperation memory)
+        internal
+        view
+        virtual
+        override
+        returns (bytes memory)
+    {
         return "";
     }
 
@@ -51,17 +57,23 @@ contract KernelECDSATest is KernelTestBase {
     }
 
     function getInitializeData() internal view override returns (bytes memory) {
-        return abi.encodeWithSelector(KernelStorage.initialize.selector, address(ecdsa), abi.encodePacked(owner));
+        return abi.encodeWithSelector(
+            KernelStorage.initialize.selector, address(ecdsa), abi.encodePacked(owner)
+        );
     }
 
     function test_set_default_validator() external override {
         TestValidator newValidator = new TestValidator();
         bytes memory empty;
         UserOperation memory op = buildUserOperation(
-            abi.encodeWithSelector(KernelStorage.setDefaultValidator.selector, address(newValidator), empty)
+            abi.encodeWithSelector(
+                KernelStorage.setDefaultValidator.selector, address(newValidator), empty
+            )
         );
         vm.expectEmit(true, true, true, false, address(entryPoint));
-        emit UserOperationEvent(entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0);
+        emit UserOperationEvent(
+            entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0
+        );
         performUserOperationWithSig(op);
     }
 
@@ -74,7 +86,12 @@ contract KernelECDSATest is KernelTestBase {
         return abi.encodePacked(r, s, v);
     }
 
-    function getWrongSignature(UserOperation memory op) internal view override returns (bytes memory) {
+    function getWrongSignature(UserOperation memory op)
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
         return abi.encodePacked(bytes4(0x00000000), entryPoint.signUserOpHash(vm, ownerKey + 1, op));
     }
 
@@ -98,13 +115,16 @@ contract KernelECDSATest is KernelTestBase {
     function test_transfer_ownership() external {
         address newOwner = makeAddr("new owner");
         UserOperation memory op = entryPoint.fillUserOp(
-            address(kernel), abi.encodeWithSelector(KernelLiteECDSA.transferOwnership.selector, newOwner)
+            address(kernel),
+            abi.encodeWithSelector(KernelLiteECDSA.transferOwnership.selector, newOwner)
         );
         op.signature = signUserOp(op);
         UserOperation[] memory ops = new UserOperation[](1);
         ops[0] = op;
         vm.expectEmit(true, true, true, false, address(entryPoint));
-        emit UserOperationEvent(entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0);
+        emit UserOperationEvent(
+            entryPoint.getUserOpHash(op), address(kernel), address(0), op.nonce, false, 0, 0
+        );
         performUserOperationWithSig(op);
     }
 }

@@ -6,19 +6,24 @@ type ValidUntil is uint48;
 
 type ValidationData is uint256;
 
-function packValidationData(ValidAfter validAfter, ValidUntil validUntil) pure returns (ValidationData) {
+function packValidationData(
+    ValidAfter validAfter,
+    ValidUntil validUntil
+) pure returns (ValidationData) {
     return ValidationData.wrap(
-        uint256(ValidAfter.unwrap(validAfter)) << 208 | uint256(ValidUntil.unwrap(validUntil)) << 160
+        uint256(ValidAfter.unwrap(validAfter)) << 208
+            | uint256(ValidUntil.unwrap(validUntil)) << 160
     );
 }
 
-function packValidationData(address aggregator, ValidAfter validAfter, ValidUntil validUntil)
-    pure
-    returns (ValidationData)
-{
+function packValidationData(
+    address aggregator,
+    ValidAfter validAfter,
+    ValidUntil validUntil
+) pure returns (ValidationData) {
     return ValidationData.wrap(
-        uint256(ValidAfter.unwrap(validAfter)) << 208 | uint256(ValidUntil.unwrap(validUntil)) << 160
-            | uint160(aggregator)
+        uint256(ValidAfter.unwrap(validAfter)) << 208
+            | uint256(ValidUntil.unwrap(validUntil)) << 160 | uint160(aggregator)
     );
 }
 

@@ -9,8 +9,8 @@ import "src/executor/KillSwitchAction.sol";
 // test utils
 import "forge-std/Test.sol";
 import "src/utils/ERC4337Utils.sol";
-import {KernelTestBase} from "src/utils/KernelTestBase.sol";
-import {KernelECDSATest} from "../KernelECDSA.t.sol";
+import { KernelTestBase } from "src/utils/KernelTestBase.sol";
+import { KernelECDSATest } from "../KernelECDSA.t.sol";
 
 using ERC4337Utils for IEntryPoint;
 
@@ -37,12 +37,18 @@ contract KillSwitchValidatorTest is KernelECDSATest {
         return abi.encodePacked(guardian);
     }
 
-    function getValidatorSignature(UserOperation memory _op) internal view override returns (bytes memory sig) {
+    function getValidatorSignature(UserOperation memory _op)
+        internal
+        view
+        override
+        returns (bytes memory sig)
+    {
         uint256 pausedUntil = block.timestamp + 1000;
 
         bytes32 hash = entryPoint.getUserOpHash(_op);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(
-            guardianKey, ECDSA.toEthSignedMessageHash(keccak256(bytes.concat(bytes6(uint48(pausedUntil)), hash)))
+            guardianKey,
+            ECDSA.toEthSignedMessageHash(keccak256(bytes.concat(bytes6(uint48(pausedUntil)), hash)))
         );
         sig = abi.encodePacked(uint48(pausedUntil), r, s, v);
     }
@@ -53,23 +59,32 @@ contract KillSwitchValidatorTest is KernelECDSATest {
         );
     }
 
-    function test_should_fail_with_not_implemented_isValidSignature(bytes32 hash, bytes memory sig) public {
+    function test_should_fail_with_not_implemented_isValidSignature(
+        bytes32 hash,
+        bytes memory sig
+    ) public {
         vm.expectRevert();
         killSwitch.validateSignature(hash, sig);
     }
 
     function test_should_fail_with_not_implemented_validCaller() public {
-        test_should_fail_with_not_implemented_validCaller(address(0), abi.encodePacked("HelloWorld"));
+        test_should_fail_with_not_implemented_validCaller(
+            address(0), abi.encodePacked("HelloWorld")
+        );
     }
 
-    function test_should_fail_with_not_implemented_validCaller(address caller, bytes memory data) public {
+    function test_should_fail_with_not_implemented_validCaller(
+        address caller,
+        bytes memory data
+    ) public {
         vm.expectRevert();
         killSwitch.validCaller(caller, data);
     }
 
     function test_force_unblock() external {
-        UserOperation memory op =
-            buildUserOperation(abi.encodeWithSelector(Kernel.execute.selector, owner, 0, "", Operation.Call));
+        UserOperation memory op = buildUserOperation(
+            abi.encodeWithSelector(Kernel.execute.selector, owner, 0, "", Operation.Call)
+        );
 
         op.signature = bytes.concat(bytes4(0), entryPoint.signUserOpHash(vm, ownerKey, op));
         performUserOperation(op);
@@ -78,7 +93,12 @@ contract KillSwitchValidatorTest is KernelECDSATest {
         bytes memory enableData = abi.encodePacked(guardian);
         {
             bytes32 digest = getTypedDataHash(
-                KillSwitchAction.toggleKillSwitch.selector, 0, 0, address(killSwitch), address(action), enableData
+                KillSwitchAction.toggleKillSwitch.selector,
+                0,
+                0,
+                address(killSwitch),
+                address(action),
+                enableData
             );
             (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerKey, digest);
 
@@ -100,7 +120,10 @@ contract KillSwitchValidatorTest is KernelECDSATest {
         bytes32 hash = entryPoint.getUserOpHash(op);
         {
             (uint8 v, bytes32 r, bytes32 s) = vm.sign(
-                guardianKey, ECDSA.toEthSignedMessageHash(keccak256(bytes.concat(bytes6(uint48(pausedUntil)), hash)))
+                guardianKey,
+                ECDSA.toEthSignedMessageHash(
+                    keccak256(bytes.concat(bytes6(uint48(pausedUntil)), hash))
+                )
             );
             bytes memory sig = abi.encodePacked(r, s, v);
 

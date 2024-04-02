@@ -12,7 +12,7 @@ contract DeployRecovery is Script {
         console.log("Deployer address: ", deployer);
         //RecoveryAction action = new RecoveryAction{salt:0}();
         //console.log("Deploying RecoveryAction at address: ", address(action));
-        WeightedECDSAValidator validator = new WeightedECDSAValidator{salt: 0}();
+        WeightedECDSAValidator validator = new WeightedECDSAValidator{ salt: 0 }();
         console.log("Deploying WeightedECDSAValidator at address: ", address(validator));
         vm.stopBroadcast();
     }
