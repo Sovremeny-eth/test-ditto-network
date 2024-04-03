@@ -1,11 +1,11 @@
 pragma solidity ^0.8.0;
 
-import "src/validator/modularPermission/ModularPermissionValidator.sol";
-import "src/validator/modularPermission/signers/ECDSASigner.sol";
-import "src/validator/modularPermission/policies/GasPolicy.sol";
-import "src/validator/modularPermission/policies/SignaturePolicy.sol";
-import "src/validator/modularPermission/policies/SudoPolicy.sol";
-import { MerklePolicy } from "src/validator/modularPermission/policies/MerklePolicy.sol";
+import "src/kernel/validator/modularPermission/ModularPermissionValidator.sol";
+import "src/kernel/validator/modularPermission/signers/ECDSASigner.sol";
+import "src/kernel/validator/modularPermission/policies/GasPolicy.sol";
+import "src/kernel/validator/modularPermission/policies/SignaturePolicy.sol";
+import "src/kernel/validator/modularPermission/policies/SudoPolicy.sol";
+import { MerklePolicy } from "src/kernel/validator/modularPermission/policies/MerklePolicy.sol";
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 

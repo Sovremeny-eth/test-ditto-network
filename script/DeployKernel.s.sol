@@ -1,12 +1,12 @@
 pragma solidity ^0.8.0;
 
-import "src/factory/KernelFactory.sol";
+import "src/kernel/factory/KernelFactory.sol";
 import "I4337/interfaces/IStakeManager.sol";
-import "src/Kernel.sol";
-import "src/lite/KernelLiteECDSA.sol";
+import "src/kernel/Kernel.sol";
+import "src/kernel/lite/KernelLiteECDSA.sol";
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "src/validator/ECDSAValidator.sol";
+import "src/kernel/validator/ECDSAValidator.sol";
 
 contract DeployKernel is Script {
     address constant DEPLOYER = 0x9775137314fE595c943712B0b336327dfa80aE8A;

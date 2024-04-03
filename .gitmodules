@@ -5,7 +5,7 @@
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
-	branch = release-v4.8
+	branch = release-v5.0
 [submodule "lib/aave-v3-periphery"]
 	path = lib/aave-v3-periphery
 	url = https://github.com/aave/aave-v3-periphery
@@ -29,7 +29,7 @@
 [submodule "lib/account-abstraction"]
 	path = lib/account-abstraction
 	url = https://github.com/eth-infinitism/account-abstraction
-	branch = releases/v0.6
+	branch = develop
 [submodule "lib/I4337"]
 	path = lib/I4337
 	url = https://github.com/leekt/I4337

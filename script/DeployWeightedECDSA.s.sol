@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "src/validator/WeightedECDSAValidator.sol";
-import "src/executor/RecoveryAction.sol";
+import "src/kernel/validator/WeightedECDSAValidator.sol";
+import "src/kernel/executor/RecoveryAction.sol";
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 

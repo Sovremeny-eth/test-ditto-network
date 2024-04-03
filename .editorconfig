@@ -24,6 +24,9 @@ ij_javascript_use_explicit_js_extension = auto
 ij_javascript_use_path_mapping = always
 ij_javascript_use_semicolon_after_statement = true
 
+[*.sol]
+indent_size = 4
+
 [{*.markdown,*.md}]
 indent_size = 2
 tab_width = 2

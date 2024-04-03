@@ -11,3 +11,4 @@ solady/=lib/solady/src/
 I4337/=lib/I4337/src/
 FreshCryptoLib/=lib/FreshCryptoLib/solidity/src/
 p256-verifier/=lib/p256-verifier/src/
+sentinellist/=node_modules/sentinellist/src/

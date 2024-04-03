@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "src/utils/P256VerifierWrapper.sol";
-import "src/validator/webauthn//WebAuthnFclValidator.sol";
+import "src/kernel/utils/P256VerifierWrapper.sol";
+import "src/kernel/validator/webauthn//WebAuthnFclValidator.sol";
 import "./DeterministicDeploy.s.sol";
 import "forge-std/console.sol";
 

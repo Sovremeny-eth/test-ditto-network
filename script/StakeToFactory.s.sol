@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/factory/KernelFactory.sol";
+import "src/kernel/factory/KernelFactory.sol";
 import "I4337/interfaces/IStakeManager.sol";
 import "forge-std/Script.sol";
 import "forge-std/console.sol";

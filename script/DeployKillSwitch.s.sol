@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "src/validator/KillSwitchValidator.sol";
-import "src/executor/KillSwitchAction.sol";
+import "src/kernel/validator/KillSwitchValidator.sol";
+import "src/kernel/executor/KillSwitchAction.sol";
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
