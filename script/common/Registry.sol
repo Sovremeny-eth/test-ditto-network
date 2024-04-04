@@ -6,9 +6,9 @@ import {
     ITransparentUpgradeableProxy
 } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
-import { IDittoOracleV3 } from "../src/ditto/vault/interfaces/IDittoOracleV3.sol";
-import { DittoBridgeReceiver } from "../src/ditto/DittoBridgeReceiver.sol";
-import { ProtocolFees } from "../src/ditto/ProtocolFees.sol";
+import { IDittoOracleV3 } from "src/ditto/vault/interfaces/IDittoOracleV3.sol";
+import { DittoBridgeReceiver } from "src/ditto/DittoBridgeReceiver.sol";
+import { ProtocolFees } from "src/ditto/ProtocolFees.sol";
 
 import { IAutomate } from "@gelato/contracts/integrations/Types.sol";
 import { IPoolAddressesProvider } from
@@ -17,12 +17,12 @@ import { IUniswapV3Factory } from "@uniswap/v3-core/contracts/interfaces/IUniswa
 import { INonfungiblePositionManager } from
     "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 
-import { VaultProxyAdmin } from "../src/ditto/VaultProxyAdmin.sol";
-import { UpgradeLogic } from "../src/ditto/vault/UpgradeLogic.sol";
-import { IWETH9 } from "../src/ditto/vault/interfaces/external/IWETH9.sol";
-import { IV3SwapRouter } from "../src/ditto/vault/interfaces/external/IV3SwapRouter.sol";
-import { AaveLogicLens } from "../src/ditto/lens/AaveLogicLens.sol";
-import { DexLogicLens } from "../src/ditto/lens/DexLogicLens.sol";
+import { VaultProxyAdmin } from "src/ditto/VaultProxyAdmin.sol";
+import { UpgradeLogic } from "src/ditto/vault/UpgradeLogic.sol";
+import { IWETH9 } from "src/ditto/vault/interfaces/external/IWETH9.sol";
+import { IV3SwapRouter } from "src/ditto/vault/interfaces/external/IV3SwapRouter.sol";
+import { AaveLogicLens } from "src/ditto/lens/AaveLogicLens.sol";
+import { DexLogicLens } from "src/ditto/lens/DexLogicLens.sol";
 
 library Registry {
     struct Contracts {

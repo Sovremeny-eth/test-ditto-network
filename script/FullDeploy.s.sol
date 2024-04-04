@@ -67,7 +67,7 @@ import { PartnerFeeModule } from "../src/ditto/vault/modules/PartnerFeeModule.so
 import { PartnerFee } from "../src/ditto/vault/modules/PartnerFee.sol";
 
 import { DeployEngine } from "./common/DeployEngine.sol";
-import { Registry } from "./Registry.sol";
+import { Registry } from "./common/Registry.sol";
 
 contract FullDeploy is Script {
     bytes32 constant salt = keccak256("DEV-1");

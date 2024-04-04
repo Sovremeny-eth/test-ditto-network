@@ -18,6 +18,7 @@ import {
     ModeSelector,
     ModePayload
 } from "src/erc7579/lib/ModeLib.sol";
+import { DittoNetworkExecutor } from "src/DittoNetworkExecutor.sol";
 
 import "../dependencies/EntryPoint.sol";
 
@@ -29,6 +30,7 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
 
     MockValidator defaultValidator;
     MockExecutor defaultExecutor;
+    DittoNetworkExecutor executor;
 
     MockTarget target;
 
@@ -43,6 +45,7 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
         // Set up Modules
         defaultExecutor = new MockExecutor();
         defaultValidator = new MockValidator();
+        executor = new DittoNetworkExecutor();
 
         // Set up Target for testing
         target = new MockTarget();
@@ -51,7 +54,9 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
     function getAccountAndInitCode() internal returns (address account, bytes memory initCode) {
         // Create config for initial modules
         BootstrapConfig[] memory validators = makeBootstrapConfig(address(defaultValidator), "");
-        BootstrapConfig[] memory executors = makeBootstrapConfig(address(defaultExecutor), "");
+        BootstrapConfig[] memory executors = new BootstrapConfig[](2);
+        executors[0] = makeBootstrapConfig(address(defaultExecutor), "")[0];
+        executors[1] = makeBootstrapConfig(address(executor), "")[0];
         BootstrapConfig memory hook = _makeBootstrapConfig(address(0), "");
         BootstrapConfig[] memory fallbacks = makeBootstrapConfig(address(0), "");
 
