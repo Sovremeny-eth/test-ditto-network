@@ -3,10 +3,10 @@
 ## Prerequisites
 
 - [pnpm] package manager
-- [forge] ethereum testing framework
+- [foundry] ethereum testing framework
 
 [pnpm]: https://pnpm.io/
-[forge]: https://github.com/foundry-rs/foundry
+[foundry]: https://github.com/foundry-rs/foundry
 
 ## Dependencies
 
@@ -23,7 +23,9 @@ forge test
 
 More commands:
 
-- `pnpm run dev` - TODO
+- `pnpm run install:submodules` - install submodules for new repository
+- `pnpm run gas:report` - gas report with tests for deploy
+- `pnpm run clean` - deletes all build folders
 
 ## Project structure
 
@@ -35,4 +37,5 @@ More commands:
 
 - [Learn more about plugins](https://docs.zerodev.app/sdk/plugins/intro)
 - [Read the source code](https://github.com/zerodevapp/kernel)
+- [ERC7579](https://github.com/erc7579/erc7579-implementation)
 - [Ditto Network Smart Contracts](https://github.com/dittonetwork/blast-contracts)
