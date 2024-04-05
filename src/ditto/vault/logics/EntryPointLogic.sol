@@ -16,7 +16,7 @@ import { DittoFeeBase, IProtocolFees } from "../libraries/DittoFeeBase.sol";
 import { BaseContract, Constants } from "../libraries/BaseContract.sol";
 import { TransferHelper } from "../libraries/utils/TransferHelper.sol";
 
-import { IAccessControlLogic } from "../interfaces/IAccessControlLogic.sol";
+//import { IAccessControlLogic } from "../interfaces/IAccessControlLogic.sol";
 import { IEntryPointLogic } from "../interfaces/IEntryPointLogic.sol";
 
 /// @title EntryPointLogic
@@ -518,7 +518,8 @@ contract EntryPointLogic is IEntryPointLogic, BaseContract, DittoFeeBase {
             workflow.counter = count;
         }
 
-        _call(abi.encodeCall(IAccessControlLogic.grantRole, (Constants.EXECUTOR_ROLE, executor)));
+        //        _call(abi.encodeCall(IAccessControlLogic.grantRole, (Constants.EXECUTOR_ROLE,
+        // executor)));
 
         emit EntryPointAddWorkflow(workflowKey);
     }

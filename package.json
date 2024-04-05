@@ -30,8 +30,13 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "prepack": "./script/prepack-contracts-package.sh",
-    "postpack": "./script/postpack-contracts-package.sh",
-    "format": "forge fmt"
+    "build": "forge build",
+    "clean": "shx rm -rf artifacts broadcast cache docs out out-optimized out-svg",
+    "build:clean": "run-s clean build",
+    "format": "forge fmt",
+    "test": "forge test",
+    "test:trace": "forge test -vvvv",
+    "install:submodules": "./devtools/install-submodules.sh",
+    "gas:report": "./gas/gas-report.sh"
   }
 }

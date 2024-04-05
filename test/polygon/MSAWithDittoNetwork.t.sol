@@ -2,8 +2,7 @@
 pragma solidity ^0.8.23;
 
 import { Test, console2 } from "forge-std/Test.sol";
-import { IUniversalVault } from "script/polygon/IUniversalVault.sol";
-import { POLYGON_ENTRYPOINT_0_6_0, POLYGON_UNIVERSAL_VAULT_ADDRESS } from "src/DittoConstants.sol";
+import { POLYGON_ENTRYPOINT_0_6_0 } from "src/DittoConstants.sol";
 import { DittoNetworkExecutor } from "src/DittoNetworkExecutor.sol";
 
 import { IEntryPoint } from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
@@ -31,7 +30,6 @@ contract MSAWithDittoNetworkTest is BootstrapUtil, Test {
     DittoNetworkExecutor dittoExecutor;
 
     MockTarget mockTarget;
-    IUniversalVault target;
 
     address owner;
     uint256 ownerKey;
@@ -52,21 +50,15 @@ contract MSAWithDittoNetworkTest is BootstrapUtil, Test {
         dittoExecutor = new DittoNetworkExecutor();
         defaultValidator = new SimpleExecutionValidator();
 
-        target = IUniversalVault(POLYGON_UNIVERSAL_VAULT_ADDRESS);
+        // target = IUniversalVault(POLYGON_UNIVERSAL_VAULT_ADDRESS);
         mockTarget = new MockTarget();
 
         bytes memory init = _initializeAccount();
         account = _createAccount(init);
 
         vm.startPrank(address(account));
-        account.installModule(
-            MODULE_TYPE_VALIDATOR,
-            address(defaultValidator),
-            ""
-        );
+        account.installModule(MODULE_TYPE_VALIDATOR, address(defaultValidator), "");
         vm.stopPrank();
-
-        // console2.log(address(bootstrapSingleton));
     }
 
     // =========================
@@ -74,7 +66,7 @@ contract MSAWithDittoNetworkTest is BootstrapUtil, Test {
     // =========================
 
     function test_first_transaction() external {
-        // TODO: check
+        // TODO: When installing the dittoExecutor module should initialized new storage
 
         bytes memory setValueOnTarget = abi.encodeCall(MockTarget.setValue, 1337);
 

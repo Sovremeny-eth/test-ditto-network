@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 import { Ownable } from "./external/Ownable.sol";
 
-import { IAccessControlLogic } from "./vault/interfaces/IAccessControlLogic.sol";
+//import { IAccessControlLogic } from "./vault/interfaces/IAccessControlLogic.sol";
 import { IVaultProxyAdmin } from "./IVaultProxyAdmin.sol";
 
 import { IVaultFactory } from "./IVaultFactory.sol";
@@ -227,7 +227,7 @@ contract VaultFactory is IVaultFactory, Ownable {
         );
 
         // sets the `creator` as the first `vault` owner and stores immutable `vaultId`
-        IAccessControlLogic(vault).initializeCreatorAndId(creator, vaultId);
+        // IAccessControlLogic(vault).initializeCreatorAndId(creator, vaultId);
 
         emit VaultCreated(creator, vault, vaultId);
 

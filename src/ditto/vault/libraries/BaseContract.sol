@@ -64,11 +64,11 @@ contract BaseContract {
     /// @param role The role to check against the account.
     /// @param account The account to check.
     function _checkRole(bytes32 role, address account) internal view virtual {
-        AccessControlLib.RolesStorage storage s = AccessControlLib.rolesStorage();
+        // AccessControlLib.RolesStorage storage s = AccessControlLib.rolesStorage();
 
-        if (!((msg.sender == AccessControlLib.getOwner()) || _hasRole(s, role, account))) {
-            revert UnauthorizedAccount(account);
-        }
+        // if (!((msg.sender == AccessControlLib.getOwner()) || _hasRole(s, role, account))) {
+        //    revert UnauthorizedAccount(account);
+        // }
     }
 
     /// @dev Checks if the given `account` is the contract's address itself.
@@ -88,18 +88,18 @@ contract BaseContract {
             return;
         }
 
-        if (account != AccessControlLib.getOwner()) {
-            revert UnauthorizedAccount(account);
-        }
+        // if (account != AccessControlLib.getOwner()) {
+        //     revert UnauthorizedAccount(account);
+        // }
     }
 
     /// @dev Checks if the given `account` is the owner of the contract.
     /// @dev Reverts with `UnauthorizedAccount` error if neither conditions are met.
     /// @param account The account to check.
     function _checkOnlyOwner(address account) internal view virtual {
-        if (account != AccessControlLib.getOwner()) {
-            revert UnauthorizedAccount(account);
-        }
+        // if (account != AccessControlLib.getOwner()) {
+        //     revert UnauthorizedAccount(account);
+        // }
     }
 
     /// @dev Returns `true` if `account` has been granted `role`.
