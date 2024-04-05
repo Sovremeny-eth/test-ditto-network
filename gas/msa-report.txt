@@ -1,0 +1,36 @@
+No files changed, compilation skipped
+
+Ran 2 tests for test/polygon/MSAWithDittoNetwork.t.sol:MSAWithDittoNetworkTest
+[32m[PASS][0m test_first_transaction() (gas: 187186)
+[32m[PASS][0m test_polygon_register_workflow() (gas: 165)
+Suite result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 1.63s (327.66ms CPU time)
+| src/erc7579/MSAAdvanced.sol:MSAAdvanced contract |                 |       |        |       |         |
+|--------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                  | Deployment Size |       |        |       |         |
+| 2736052                                          | 12456           |       |        |       |         |
+| Function Name                                    | min             | avg   | median | max   | # calls |
+| execute                                          | 28878           | 28878 | 28878  | 28878 | 1       |
+| initializeAccount                                | 52257           | 52257 | 52257  | 52257 | 2       |
+| installModule                                    | 55804           | 55804 | 55804  | 55804 | 2       |
+| validateUserOp                                   | 38978           | 38978 | 38978  | 38978 | 1       |
+
+
+| src/erc7579/MSAFactory.sol:MSAFactory contract |                 |        |        |        |         |
+|------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                | Deployment Size |        |        |        |         |
+| 312593                                         | 1374            |        |        |        |         |
+| Function Name                                  | min             | avg    | median | max    | # calls |
+| createAccount                                  | 156449          | 156449 | 156449 | 156449 | 2       |
+
+
+| src/erc7579/utils/Bootstrap.sol:Bootstrap contract |                 |     |        |     |         |
+|----------------------------------------------------|-----------------|-----|--------|-----|---------|
+| Deployment Cost                                    | Deployment Size |     |        |     |         |
+| 1175040                                            | 5226            |     |        |     |         |
+| Function Name                                      | min             | avg | median | max | # calls |
+| initMSA                                            | 0               | 0   | 0      | 0   | 2       |
+
+
+
+
+Ran 1 test suite in 1.64s (1.63s CPU time): [32m2[0m tests passed, [31m0[0m failed, [33m0[0m skipped (2 total tests)

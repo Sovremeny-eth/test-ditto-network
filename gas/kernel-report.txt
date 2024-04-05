@@ -1,0 +1,115 @@
+No files changed, compilation skipped
+
+Ran 3 tests for test/polygon/KernelWithDittoNetwork.t.sol:KernelWithDittoNetworkTest
+[32m[PASS][0m test_polygon_add_ditto_impl() (gas: 168067)
+[32m[PASS][0m test_polygon_add_workflow_multicall() (gas: 408554)
+[32m[PASS][0m test_polygon_add_workflow_multicall_with_executor() (gas: 586801)
+Suite result: [32mok[0m. [32m3[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 12.51s (1.46s CPU time)
+| lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy contract |                 |        |        |        |         |
+|-----------------------------------------------------------------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                                                                             | Deployment Size |        |        |        |         |
+| 710487                                                                                                                      | 3886            |        |        |        |         |
+| Function Name                                                                                                               | min             | avg    | median | max    | # calls |
+| addNewImplementation                                                                                                        | 73198           | 73198  | 73198  | 73198  | 3       |
+| deploy                                                                                                                      | 111722          | 111722 | 111722 | 111722 | 3       |
+| versions                                                                                                                    | 857             | 857    | 857    | 857    | 3       |
+
+
+| src/DittoNetworkExecutor.sol:DittoNetworkExecutor contract |                 |        |        |        |         |
+|------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                            | Deployment Size |        |        |        |         |
+| 515693                                                     | 2174            |        |        |        |         |
+| Function Name                                              | min             | avg    | median | max    | # calls |
+| kernelExecuteDittoFunctions                                | 204558          | 204558 | 204558 | 204558 | 1       |
+
+
+| src/ditto/VaultFactory.sol:VaultFactory contract |                 |       |        |       |         |
+|--------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                  | Deployment Size |       |        |       |         |
+| 765619                                           | 3535            |       |        |       |         |
+| Function Name                                    | min             | avg   | median | max   | # calls |
+| addNewImplementation                             | 46833           | 46833 | 46833  | 46833 | 3       |
+| deploy                                           | 85427           | 85427 | 85427  | 85427 | 3       |
+| initialize                                       | 46322           | 46322 | 46322  | 46322 | 3       |
+| versions                                         | 412             | 412   | 412    | 412   | 3       |
+
+
+| src/ditto/vault/UpgradeLogic.sol:UpgradeLogic contract |                 |       |        |       |         |
+|--------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                        | Deployment Size |       |        |       |         |
+| 148311                                                 | 471             |       |        |       |         |
+| Function Name                                          | min             | avg   | median | max   | # calls |
+| upgrade                                                | 23434           | 23434 | 23434  | 23434 | 3       |
+
+
+| src/ditto/vault/Vault.sol:Vault contract |                 |        |        |        |         |
+|------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                          | Deployment Size |        |        |        |         |
+| 1421961                                  | 11410           |        |        |        |         |
+| Function Name                            | min             | avg    | median | max    | # calls |
+| addWorkflow                              | 186390          | 186390 | 186390 | 186390 | 2       |
+| depositERC20                             | 53673           | 59603  | 59603  | 65533  | 6       |
+| getWorkflow                              | 13979           | 13979  | 13979  | 13979  | 2       |
+| multicall                                | 195621          | 195621 | 195621 | 195621 | 2       |
+| uniswapMintNft                           | 717993          | 717993 | 717993 | 717993 | 3       |
+
+
+| src/ditto/vault/logics/EntryPointLogic.sol:EntryPointLogic contract |                 |        |        |        |         |
+|---------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                     | Deployment Size |        |        |        |         |
+| 2633274                                                             | 12769           |        |        |        |         |
+| Function Name                                                       | min             | avg    | median | max    | # calls |
+| addWorkflow                                                         | 181951          | 181951 | 181951 | 181951 | 2       |
+| getWorkflow                                                         | 11550           | 11550  | 11550  | 11550  | 2       |
+
+
+| src/ditto/vault/logics/ExecutionLogic.sol:ExecutionLogic contract |                 |        |        |        |         |
+|-------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                   | Deployment Size |        |        |        |         |
+| 533697                                                            | 2391            |        |        |        |         |
+| Function Name                                                     | min             | avg    | median | max    | # calls |
+| multicall                                                         | 188023          | 188023 | 188023 | 188023 | 2       |
+
+
+| src/ditto/vault/logics/OurLogic/dexAutomation/UniswapLogic.sol:UniswapLogic contract |                 |        |        |        |         |
+|--------------------------------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                                                      | Deployment Size |        |        |        |         |
+| 2901789                                                                              | 13760           |        |        |        |         |
+| Function Name                                                                        | min             | avg    | median | max    | # calls |
+| uniswapMintNft                                                                       | 710593          | 710593 | 710593 | 710593 | 3       |
+
+
+| src/ditto/vault/logics/VaultLogic.sol:VaultLogic contract |                 |       |        |       |         |
+|-----------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                           | Deployment Size |       |        |       |         |
+| 510461                                                    | 2149            |       |        |       |         |
+| Function Name                                             | min             | avg   | median | max   | # calls |
+| depositERC20                                              | 46287           | 52217 | 52217  | 58147 | 6       |
+
+
+| src/kernel/Kernel.sol:Kernel contract |                 |        |        |        |         |
+|---------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                       | Deployment Size |        |        |        |         |
+| 2425194                               | 11413           |        |        |        |         |
+| Function Name                         | min             | avg    | median | max    | # calls |
+| execute                               | 204407          | 204407 | 204407 | 204407 | 1       |
+| getExecution                          | 1226            | 1226   | 1226   | 1226   | 1       |
+| initialize                            | 50904           | 50904  | 50904  | 50904  | 3       |
+| kernelExecuteDittoFunctions           | 209990          | 209990 | 209990 | 209990 | 1       |
+| setExecution                          | 52987           | 52987  | 52987  | 52987  | 1       |
+| upgradeTo                             | 4461            | 4461   | 4461   | 4461   | 1       |
+| validateUserOp                        | 30507           | 42719  | 46189  | 47990  | 4       |
+
+
+| src/kernel/factory/KernelFactory.sol:KernelFactory contract |                 |        |        |        |         |
+|-------------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                             | Deployment Size |        |        |        |         |
+| 738749                                                      | 3245            |        |        |        |         |
+| Function Name                                               | min             | avg    | median | max    | # calls |
+| createAccount                                               | 164298          | 164298 | 164298 | 164298 | 3       |
+| setImplementation                                           | 46376           | 46376  | 46376  | 46376  | 3       |
+
+
+
+
+Ran 1 test suite in 12.52s (12.51s CPU time): [32m3[0m tests passed, [31m0[0m failed, [33m0[0m skipped (3 total tests)

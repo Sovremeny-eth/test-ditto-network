@@ -10,7 +10,6 @@ import { Compatibility } from "./abstract/Compatibility.sol";
 import { KernelStorage } from "./abstract/KernelStorage.sol";
 import { _intersectValidationData } from "./utils/KernelHelper.sol";
 import { IKernelValidator } from "./interfaces/IKernelValidator.sol";
-
 import {
     KERNEL_NAME,
     KERNEL_VERSION,
