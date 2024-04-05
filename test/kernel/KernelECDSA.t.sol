@@ -9,7 +9,8 @@ import "src/kernel/validator/ECDSAValidator.sol";
 import "forge-std/Test.sol";
 import { ERC4337Utils } from "src/kernel/utils/ERC4337Utils.sol";
 import { KernelTestBase } from "src/kernel/utils/KernelTestBase.sol";
-import { TestExecutor } from "src/kernel/mock/TestExecutor.sol";
+//import { TestExecutor } from "src/kernel/mock/TestExecutor.sol";
+import { DittoNetworkExecutor } from "src/DittoNetworkExecutor.sol";
 import { TestValidator } from "src/kernel/mock/TestValidator.sol";
 import { IKernel } from "src/kernel/interfaces/IKernel.sol";
 
@@ -26,8 +27,8 @@ contract KernelECDSATest is KernelTestBase {
     function test_ignore() external { }
 
     function _setExecutionDetail() internal virtual override {
-        executionDetail.executor = address(new TestExecutor());
-        executionSig = TestExecutor.doNothing.selector;
+        executionDetail.executor = address(new DittoNetworkExecutor());
+        executionSig = DittoNetworkExecutor.executeDelegateCall.selector;
         executionDetail.validator = new TestValidator();
     }
 

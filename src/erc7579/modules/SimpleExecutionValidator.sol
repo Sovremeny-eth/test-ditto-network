@@ -36,7 +36,7 @@ contract SimpleExecutionValidator is IValidator {
     }
 
     function validateUserOp(
-        PackedUserOperation calldata userOp,
+        UserOperation calldata userOp,
         bytes32 userOpHash
     ) external override returns (uint256) {
         // get the function selector that will be called by EntryPoint
@@ -51,6 +51,8 @@ contract SimpleExecutionValidator is IValidator {
             (address target, uint256 value, bytes calldata callData) =
                 executionCalldata.decodeSingle();
         }
+
+        return VALIDATION_SUCCESS;
     }
 
     function isValidSignatureWithSender(

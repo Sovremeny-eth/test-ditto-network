@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity ^0.8.23;
 
 import { AccessControlLib } from "../../../libraries/AccessControlLib.sol";
 import { BaseContract } from "../../../libraries/BaseContract.sol";

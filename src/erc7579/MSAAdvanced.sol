@@ -4,8 +4,7 @@ pragma solidity ^0.8.23;
 import "./lib/ModeLib.sol";
 import { ExecutionLib } from "./lib/ExecutionLib.sol";
 import { ExecutionHelper } from "./core/ExecutionHelper.sol";
-import { PackedUserOperation } from
-    "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import { UserOperation } from "@account-abstraction/contracts/interfaces/UserOperation.sol";
 import "./interfaces/IERC7579Module.sol";
 import { IERC7579Account } from "./interfaces/IERC7579Account.sol";
 import { IMSA } from "./interfaces/IMSA.sol";
@@ -149,18 +148,14 @@ contract MSAAdvanced is IMSA, ExecutionHelper, ModuleManager, HookManager {
     }
 
     /**
-     * @dev ERC-4337 executeUserOp according to ERC-4337 v0.7
+     * @dev ERC-4337 executeUserOp according to ERC-4337 v0.6
      *         This function is intended to be called by ERC-4337 EntryPoint.sol
      * @dev Ensure adequate authorization control: i.e. onlyEntryPointOrSelf
      *      The implementation of the function is OPTIONAL
      *
-     * @param userOp PackedUserOperation struct (see ERC-4337 v0.7+)
+     * @param userOp UserOperation struct (see ERC-4337 v0.6)
      */
-    function executeUserOp(PackedUserOperation calldata userOp)
-        external
-        payable
-        onlyEntryPointOrSelf
-    {
+    function executeUserOp(UserOperation calldata userOp) external payable onlyEntryPointOrSelf {
         bytes calldata callData = userOp.callData[4:];
         (bool success,) = address(this).delegatecall(callData);
         if (!success) {
@@ -213,16 +208,16 @@ contract MSAAdvanced is IMSA, ExecutionHelper, ModuleManager, HookManager {
     }
 
     /**
-     * @dev ERC-4337 validateUserOp according to ERC-4337 v0.7
+     * @dev ERC-4337 validateUserOp according to ERC-4337 v0.6
      *         This function is intended to be called by ERC-4337 EntryPoint.sol
      * this validation function should decode / sload the validator module to validate the userOp
      * and call it.
      *
      * @dev MSA MUST implement this function signature.
-     * @param userOp PackedUserOperation struct (see ERC-4337 v0.7+)
+     * @param userOp UserOperation struct (see ERC-4337 v0.6)
      */
     function validateUserOp(
-        PackedUserOperation calldata userOp,
+        UserOperation calldata userOp,
         bytes32 userOpHash,
         uint256 missingAccountFunds
     ) external payable virtual payPrefund(missingAccountFunds) returns (uint256 validSignature) {

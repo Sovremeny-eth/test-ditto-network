@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity ^0.8.23;
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import { IAccount } from "@account-abstraction/contracts/interfaces/IAccount.sol";
 import { IEntryPoint } from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
-import { PackedUserOperation } from
-    "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import { UserOperation } from "@account-abstraction/contracts/interfaces/UserOperation.sol";
 
 import { BaseContract } from "../libraries/BaseContract.sol";
 import { AccessControlLib } from "../libraries/AccessControlLib.sol";
@@ -31,7 +30,7 @@ interface IAccountAbstractionLogic is IAccount {
 
     /// @inheritdoc IAccount
     function validateUserOp(
-        PackedUserOperation calldata userOp,
+        UserOperation calldata userOp,
         bytes32 userOpHash,
         uint256 missingAccountFunds
     ) external returns (uint256 validationData);

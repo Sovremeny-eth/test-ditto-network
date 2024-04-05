@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity ^0.8.23;
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import { IEntryPoint } from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
-import { PackedUserOperation } from
-    "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import { UserOperation } from "@account-abstraction/contracts/interfaces/UserOperation.sol";
 
 import { BaseContract } from "../libraries/BaseContract.sol";
 import { AccessControlLib } from "../libraries/AccessControlLib.sol";
@@ -40,7 +39,7 @@ contract AccountAbstractionLogic is IAccountAbstractionLogic, BaseContract {
 
     //// @inheritdoc IAccount
     function validateUserOp(
-        PackedUserOperation calldata userOp,
+        UserOperation calldata userOp,
         bytes32 userOpHash,
         uint256 missingAccountFunds
     ) external returns (uint256 validationData) {
@@ -118,7 +117,7 @@ contract AccountAbstractionLogic is IAccountAbstractionLogic, BaseContract {
     /// struct.
     /// @param userOpHash The hashed version of the user operation, provided as a `bytes32` value.
     function _validateSignature(
-        PackedUserOperation calldata userOp,
+        UserOperation calldata userOp,
         bytes32 userOpHash
     ) internal view returns (uint256 validationData) {
         return AccessControlLib.isValidSignature(userOpHash, userOp.signature)

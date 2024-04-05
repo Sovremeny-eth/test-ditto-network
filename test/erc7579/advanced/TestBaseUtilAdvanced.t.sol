@@ -30,7 +30,7 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
 
     MockValidator defaultValidator;
     MockExecutor defaultExecutor;
-    DittoNetworkExecutor executor;
+    DittoNetworkExecutor dittoExecutor;
 
     MockTarget target;
 
@@ -44,8 +44,8 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
 
         // Set up Modules
         defaultExecutor = new MockExecutor();
+        dittoExecutor = new DittoNetworkExecutor();
         defaultValidator = new MockValidator();
-        executor = new DittoNetworkExecutor();
 
         // Set up Target for testing
         target = new MockTarget();
@@ -56,7 +56,7 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
         BootstrapConfig[] memory validators = makeBootstrapConfig(address(defaultValidator), "");
         BootstrapConfig[] memory executors = new BootstrapConfig[](2);
         executors[0] = makeBootstrapConfig(address(defaultExecutor), "")[0];
-        executors[1] = makeBootstrapConfig(address(executor), "")[0];
+        executors[1] = makeBootstrapConfig(address(dittoExecutor), "")[0];
         BootstrapConfig memory hook = _makeBootstrapConfig(address(0), "");
         BootstrapConfig[] memory fallbacks = makeBootstrapConfig(address(0), "");
 
@@ -83,15 +83,17 @@ contract TestBaseUtilAdvanced is BootstrapUtil, Test {
         nonce = entrypoint.getNonce(address(account), key);
     }
 
-    function getDefaultUserOp() internal returns (PackedUserOperation memory userOp) {
-        userOp = PackedUserOperation({
+    function getDefaultUserOp() internal returns (UserOperation memory userOp) {
+        userOp = UserOperation({
             sender: address(0),
             nonce: 0,
             initCode: "",
             callData: "",
-            accountGasLimits: bytes32(abi.encodePacked(uint128(2e6), uint128(2e6))),
-            preVerificationGas: 2e6,
-            gasFees: bytes32(abi.encodePacked(uint128(2e6), uint128(2e6))),
+            callGasLimit: 10000000,
+            verificationGasLimit: 10000000,
+            preVerificationGas: 50000,
+            maxFeePerGas: 50000,
+            maxPriorityFeePerGas: 1,
             paymasterAndData: bytes(""),
             signature: abi.encodePacked(hex"41414141")
         });

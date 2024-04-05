@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import { POLYGON_UNIVERSAL_VAULT_ADDRESS } from "./DittoConstants.sol";
+//import { POLYGON_UNIVERSAL_VAULT_ADDRESS } from "./DittoConstants.sol";
+import { IUniversalVault } from "../script/polygon/IUniversalVault.sol";
 import { IExecutor, MODULE_TYPE_EXECUTOR } from "./erc7579/interfaces/IERC7579Module.sol";
 import { IERC7579Account } from "./erc7579/interfaces/IERC7579Account.sol";
 import {
@@ -25,7 +26,7 @@ contract DittoNetworkExecutor is IExecutor {
             ModeLib.encode(
                 CALLTYPE_DELEGATECALL, EXECTYPE_DEFAULT, MODE_DEFAULT, ModePayload.wrap(0x00)
             ),
-            abi.encodePacked(address(POLYGON_UNIVERSAL_VAULT_ADDRESS), callData)
+            callData
         );
     }
 

@@ -4,10 +4,8 @@ pragma solidity ^0.8.21;
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import { IEntryPoint } from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import { EntryPoint, SenderCreator } from "@account-abstraction/contracts/core/EntryPoint.sol";
-import { EntryPointSimulations } from
-    "@account-abstraction/contracts/core/EntryPointSimulations.sol";
 
-contract EntryPointSimulationsPatch is EntryPointSimulations {
+contract EntryPointSimulationsPatch {
     address _entrypointAddr = address(this);
 
     SenderCreator _newSenderCreator;
@@ -17,7 +15,7 @@ contract EntryPointSimulationsPatch is EntryPointSimulations {
         initSenderCreator();
     }
 
-    function initSenderCreator() internal override {
+    function initSenderCreator() internal {
         //this is the address of the first contract created with CREATE by this address.
         address createdObj = address(
             uint160(uint256(keccak256(abi.encodePacked(hex"d694", _entrypointAddr, hex"01"))))
@@ -25,7 +23,7 @@ contract EntryPointSimulationsPatch is EntryPointSimulations {
         _newSenderCreator = SenderCreator(createdObj);
     }
 
-    function senderCreator() internal view virtual override returns (SenderCreator) {
+    function senderCreator() internal view virtual returns (SenderCreator) {
         return _newSenderCreator;
     }
 }

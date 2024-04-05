@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity ^0.8.23;
 
 import { IPool } from "@aave/aave-v3-core/contracts/interfaces/IPool.sol";
 import { IVariableDebtToken } from "@aave/aave-v3-core/contracts/interfaces/IVariableDebtToken.sol";
